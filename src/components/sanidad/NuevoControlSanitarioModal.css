@@ -1,0 +1,170 @@
+/* RIO_BLANCO - PASO 17.2 - CSS independiente, responsive. */
+.scm-capa, .scm-capa *, .scm-capa *::before, .scm-capa *::after { box-sizing: border-box; }
+.scm-capa {
+  position: fixed; inset: 0; z-index: 11000;
+  display: flex; justify-content: center; align-items: center;
+  background: rgba(3, 19, 38, .76); padding: 14px;
+}
+.scm-modal {
+  display: flex; flex-direction: column; width: min(760px, 100%);
+  max-height: min(780px, 92dvh); min-width: 0;
+  background: #fff; border-radius: 15px; overflow: hidden;
+  box-shadow: 0 22px 76px rgba(0, 12, 29, .34); color: #133e6b;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.scm-cabecera {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 19px 22px; gap: 16px; background: #12395a;
+  color: white; flex: 0 0 auto;
+}
+.scm-sobretitulo { font-size: 10px; font-weight: 800; letter-spacing: 1px; color: #a8dcfc; }
+.scm-cabecera h2 { color: #fff !important; font-size: clamp(19px, 2.5vw, 24px); line-height: 1.25; margin: 7px 0; }
+.scm-cabecera p { margin: 0; font-size: 12px; line-height: 1.5; color: #d6eafa !important; }
+.scm-cabecera p strong { color: white; }
+.scm-cerrar {
+  flex: 0 0 auto; min-width: 36px; min-height: 36px; border: 1px solid #7499b9;
+  border-radius: 7px; background: #2b5476; color: white; font-size: 22px; cursor: pointer;
+}
+.scm-formulario { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.scm-cuerpo { overflow-y: auto; overflow-x: hidden; flex: 1 1 auto; min-height: 0; padding: 18px 22px; overscroll-behavior: contain; }
+.scm-aviso { border: 1px solid #efc576; background: #fff3d3; color: #674600; padding: 11px 13px; border-radius: 8px; font-size: 12px; line-height: 1.5; }
+.scm-cuerpo h3 { margin: 20px 0 12px; padding-bottom: 8px; border-bottom: 1px solid #d7e6f2; font-size: 14px; color: #133e6b; }
+.scm-resumen-animal { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; background: #edf6fd; border: 1px solid #d5e6f3; border-radius: 9px; padding: 13px; }
+.scm-resumen-animal > div { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
+.scm-resumen-animal small { color: #55738e; font-size: 10px; font-weight: 700; }
+.scm-resumen-animal strong { color: #103b69; font-size: 12px; overflow-wrap: anywhere; }
+.scm-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px 14px; }
+.scm-campo { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.scm-ancho-completo { grid-column: 1 / -1; }
+.scm-campo label { font-size: 11px; font-weight: 800; color: #345c80; }
+.scm-campo input, .scm-campo select, .scm-campo textarea {
+  display: block; width: 100%; min-width: 0; min-height: 40px; border: 1px solid #bfd3e6;
+  border-radius: 7px; background: white; padding: 9px 10px;
+  font-size: 13px; color: #123c65; font-family: inherit;
+}
+.scm-campo textarea { resize: vertical; min-height: 68px; line-height: 1.5; }
+.scm-campo [aria-invalid="true"] { border-color: #c83737; }
+.scm-error { color: #af2727; font-size: 11px; line-height: 1.4; }
+.scm-ok { margin-top: 16px; background: #e6f7ed; border: 1px solid #96d6b0; color: #17633e; border-radius: 8px; padding: 12px; font-size: 12px; line-height: 1.5; }
+.scm-pie { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 13px 20px; border-top: 1px solid #d8e5ef; background: #f4f8fc; }
+.scm-pie > span { color: #587691; font-size: 11px; }
+.scm-pie > div { display: flex; gap: 9px; }
+.scm-pie button { border-radius: 7px; border: 1px solid #b7cfe2; min-height: 40px; padding: 9px 14px; font-size: 12px; font-weight: 800; cursor: pointer; }
+.scm-cancelar { color: #154877; background: white; }
+.scm-validar { color: white; background: #1769bd; border-color: #1769bd !important; }
+.scm-capa button:focus-visible, .scm-capa input:focus-visible, .scm-capa select:focus-visible, .scm-capa textarea:focus-visible { outline: 3px solid #8ccaff; outline-offset: 2px; }
+/* Se aplica a la tarjeta de búsqueda existente del PASO 17.1. */
+.cs-pagina .cs-animal-acciones { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; flex-wrap: wrap; }
+.cs-pagina .cs-preparar-control {
+  min-height: 42px; border: 1px solid #1769bd; border-radius: 7px;
+  padding: 10px 13px; background: #1769bd; color: white;
+  font-weight: 800; font-size: 12px; cursor: pointer;
+}
+.cs-pagina .cs-preparar-control:hover { background: #12599c; }
+@media (max-width: 760px) {
+  .scm-pie { flex-wrap: wrap; }
+  .cs-pagina .cs-animal-acciones { width: 100%; }
+  .cs-pagina .cs-animal-acciones button { flex: 1; min-width: 125px; }
+}
+@media (max-width: 600px) {
+  .scm-capa { padding: 8px; align-items: center; }
+  .scm-modal { max-height: 96dvh; width: 100%; border-radius: 11px; }
+  .scm-cabecera { padding: 14px 16px; }
+  .scm-cuerpo { padding: 13px 16px; }
+  .scm-grid { grid-template-columns: minmax(0,1fr); gap: 11px; }
+  .scm-resumen-animal { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .scm-pie { padding: 11px 12px; }
+  .scm-pie > span { display: none; }
+  .scm-pie > div { width: 100%; }
+  .scm-pie button { flex: 1; }
+}
+@media (max-width: 370px) {
+  .scm-resumen-animal { grid-template-columns: 1fr; }
+  .cs-pagina .cs-animal-acciones { flex-direction: column; }
+  .cs-pagina .cs-animal-acciones button { width: 100%; }
+}
+
+/* RIO_BLANCO - AJUSTE RESPONSIVE PASO 17.2.1 | NO ELIMINAR MARCADOR */
+/* Mayor especificidad para evitar conflictos con estilos globales del dashboard. */
+body .scm-capa {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 11000 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  padding: 18px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  background: rgba(3, 19, 38, .76) !important;
+}
+body .scm-capa > .scm-modal {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 0 1 760px !important;
+  width: min(760px, calc(100vw - 36px)) !important;
+  max-width: 760px !important;
+  min-width: 0 !important;
+  height: auto !important;
+  max-height: min(740px, 88dvh) !important;
+  margin: 0 auto !important;
+  border-radius: 15px !important;
+  overflow: hidden !important;
+}
+body .scm-capa .scm-cabecera {
+  flex: 0 0 auto !important;
+  padding: 16px 21px !important;
+}
+body .scm-capa .scm-cabecera h2 {
+  color: #fff !important;
+  font-size: clamp(19px, 2vw, 23px) !important;
+}
+body .scm-capa .scm-cabecera p { color: #d6eafa !important; }
+body .scm-capa .scm-formulario {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+body .scm-capa .scm-cuerpo {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: 15px 21px !important;
+  overscroll-behavior: contain;
+}
+body .scm-capa .scm-pie {
+  flex: 0 0 auto !important;
+  padding: 12px 19px !important;
+}
+@media (max-width: 760px) {
+  body .scm-capa { padding: 12px !important; }
+  body .scm-capa > .scm-modal {
+    flex: 0 1 auto !important;
+    width: calc(100vw - 24px) !important;
+    max-width: 100% !important;
+    max-height: calc(100dvh - 24px) !important;
+  }
+  body .scm-capa .scm-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  body .scm-capa .scm-ancho-completo { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 420px) {
+  body .scm-capa { padding: 8px !important; }
+  body .scm-capa > .scm-modal {
+    width: calc(100vw - 16px) !important;
+    max-height: calc(100dvh - 16px) !important;
+    border-radius: 11px !important;
+  }
+  body .scm-capa .scm-cabecera { padding: 13px 15px !important; }
+  body .scm-capa .scm-cuerpo { padding: 12px 15px !important; }
+  body .scm-capa .scm-pie { padding: 10px 12px !important; }
+  body .scm-capa .scm-pie > span { display: none !important; }
+  body .scm-capa .scm-pie > div { width: 100% !important; }
+  body .scm-capa .scm-pie button { flex: 1 1 0 !important; }
+}
+

@@ -1,0 +1,250 @@
+/* RIO_BLANCO - FICHA INDIVIDUAL */
+
+.fs-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(4, 20, 39, .75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+.fs-modal {
+  width: min(680px, 100%);
+  max-width: 680px;
+  max-height: 90dvh;
+  overflow-y: auto;
+  background: #fff;
+  color: #123f70;
+  border-radius: 15px;
+  box-shadow: 0 25px 75px rgba(0,0,0,.3);
+}
+
+.fs-header {
+  padding: 20px 24px;
+  background: #103858;
+  color: #fff;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.fs-header span {
+  color: #abdafa;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.fs-header h2 {
+  color: white;
+  font-size: 25px;
+  margin: 8px 0;
+}
+
+.fs-header p {
+  color: #d8eaf8;
+  margin: 0;
+  font-size: 13px;
+}
+
+.fs-cerrar {
+  border: 1px solid #7898b4;
+  background: #234d72;
+  color: white;
+  border-radius: 8px;
+  min-width: 38px;
+  height: 38px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.fs-contenido {
+  padding: 22px 24px;
+}
+
+.fs-resumen {
+  background: #eaf4fc;
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.fs-resumen > div,
+.fs-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.fs-resumen small,
+.fs-campo span,
+.fs-observaciones small {
+  font-size: 11px;
+  color: #647f98;
+  font-weight: 700;
+}
+
+.fs-resumen strong,
+.fs-campo strong {
+  font-size: 13px;
+  color: #123f70;
+  overflow-wrap: anywhere;
+}
+
+.fs-estado {
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.fs-estado.activo {
+  background: #dff5e7;
+  color: #146b39;
+}
+
+.fs-estado.baja {
+  background: #fce7e7;
+  color: #a12c2c;
+}
+
+.fs-contenido h3 {
+  font-size: 15px;
+  color: #123f70;
+  margin: 24px 0 14px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #dbe8f2;
+}
+
+.fs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.fs-campo {
+  min-width: 0;
+}
+
+.fs-observaciones {
+  margin-top: 20px;
+  padding: 14px;
+  border: 1px solid #dbe8f2;
+  border-radius: 9px;
+  background: #f8fbfe;
+}
+
+.fs-observaciones p {
+  margin: 7px 0 0;
+  color: #345977;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.fs-aviso {
+  margin-top: 20px;
+  padding: 12px;
+  background: #edf5fc;
+  color: #28577a;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.fs-error {
+  color: #b42318;
+  font-size: 13px;
+}
+
+.fs-footer {
+  padding: 14px 22px;
+  background: #f5f9fc;
+  border-top: 1px solid #dbe8f2;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.fs-footer button {
+  padding: 11px 18px;
+  border-radius: 8px;
+  background: #1769bd;
+  color: white;
+  border: 0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .fs-modal {
+    max-height: 95dvh;
+  }
+
+  .fs-header,
+  .fs-contenido {
+    padding: 17px;
+  }
+
+  .fs-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .fs-resumen {
+    flex-wrap: wrap;
+  }
+}
+
+/* RIO_BLANCO - AJUSTES FINALES DE LA FICHA INDIVIDUAL */
+
+.fs-overlay .fs-modal {
+  width: min(680px, 100%) !important;
+  max-height: 90dvh !important;
+}
+
+.fs-modal .fs-header h2 {
+  color: #ffffff !important;
+  font-size: 26px !important;
+  font-weight: 800 !important;
+}
+
+.fs-modal .fs-header p {
+  color: #d9ecfb !important;
+}
+
+.fs-modal .fs-contenido {
+  padding: 18px 23px !important;
+}
+
+.fs-modal .fs-contenido h3 {
+  margin: 18px 0 11px !important;
+}
+
+.fs-modal .fs-grid {
+  gap: 12px 18px !important;
+}
+
+.fs-modal .fs-observaciones {
+  margin-top: 14px !important;
+  padding: 11px !important;
+}
+
+.fs-modal .fs-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  background: #f5f9fc;
+}
+
+@media (max-width: 600px) {
+  .fs-modal .fs-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

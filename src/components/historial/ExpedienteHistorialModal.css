@@ -1,0 +1,169 @@
+/* RIO_BLANCO / Paso 16 - Ventana de expediente histórico */
+.eh-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10010;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(3, 17, 33, .77);
+}
+.eh-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(720px, 100%);
+  max-height: 91dvh;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 25px 80px rgba(0,0,0,.33);
+  color: #143f6b;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.eh-modal *, .eh-modal *::before, .eh-modal *::after { box-sizing: border-box; }
+.eh-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  background: #103858;
+  color: #fff;
+}
+.eh-header span { color: #b2defb; font-size: 11px; font-weight: 800; letter-spacing: 1px; }
+.eh-overlay .eh-modal .eh-header h2 { margin: 7px 0; color: #fff !important; font-size: 25px; line-height: 1.2; }
+.eh-header p { margin: 0; color: #dbedfa; font-size: 12px; }
+.eh-header > button { flex: 0 0 auto; width: 36px; height: 36px; border: 1px solid #86abc6; border-radius: 7px; background: #245578; color: #fff; font-size: 23px; cursor: pointer; }
+.eh-contenido { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 19px 23px; }
+.eh-estado-linea { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 14px; border-radius: 8px; background: #eaf4fb; }
+.eh-estado-linea > span:first-child { color: #194b74; font-size: 13px; }
+.eh-estado-linea strong { display: block; font-size: 10px; color: #527896; margin-bottom: 4px; }
+.eh-etiqueta { display: inline-block; padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 800; }
+.eh-etiqueta.activo { background: #dff5e7; color: #146b3e; }
+.eh-etiqueta.baja { background: #fde7e7; color: #a02929; }
+.eh-contenido h3 { margin: 21px 0 12px; padding-bottom: 9px; border-bottom: 1px solid #d9e7f2; color: #123f70; font-size: 15px; }
+.eh-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.eh-campo { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.eh-campo span { color: #5e7b96; font-size: 11px; font-weight: 700; }
+.eh-campo strong { color: #143f6b; font-size: 13px; overflow-wrap: anywhere; }
+.eh-observaciones { margin-top: 18px; padding: 13px 14px; border: 1px solid #dae8f4; border-radius: 9px; background: #f7fbfe; }
+.eh-observaciones strong { display: block; margin-bottom: 5px; color: #4f7495; font-size: 11px; text-transform: uppercase; }
+.eh-observaciones p { margin: 0; font-size: 13px; color: #264f73; white-space: pre-wrap; overflow-wrap: anywhere; }
+.eh-linea-tiempo { margin: 10px 0; padding: 0 0 0 22px; border-left: 2px solid #b5d3ec; list-style: none; }
+.eh-linea-tiempo li { position: relative; margin: 0 0 20px; padding: 0 0 0 4px; }
+.eh-linea-tiempo li::before { content: ''; position: absolute; top: 3px; left: -29px; width: 11px; height: 11px; border-radius: 50%; background: #1769bd; border: 2px solid #fff; box-shadow: 0 0 0 2px #a4c8e4; }
+.eh-linea-tiempo li span { display: block; margin-bottom: 4px; color: #537b9a; font-size: 11px; }
+.eh-linea-tiempo li strong { display: block; color: #12426e; font-size: 13px; }
+.eh-linea-tiempo li p { margin: 5px 0 0; color: #476b87; font-size: 12px; line-height: 1.5; }
+.eh-nota { padding: 13px; border-radius: 8px; background: #fff4d6; color: #6b520b; font-size: 12px; line-height: 1.55; }
+.eh-error { padding: 12px; background: #fff1f1; color: #a42727; border-radius: 8px; font-size: 13px; }
+.eh-footer { flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 20px; background: #f5f9fc; border-top: 1px solid #d7e5f0; }
+.eh-footer span { font-size: 11px; color: #63809a; }
+.eh-footer button { border: 0; border-radius: 7px; padding: 10px 14px; color: #fff; background: #1769bd; font-weight: 800; cursor: pointer; }
+@media (max-width: 600px) {
+  .eh-overlay { padding: 8px; }
+  .eh-modal { max-height: 96dvh; }
+  .eh-header, .eh-contenido { padding: 16px; }
+  .eh-grid { grid-template-columns: 1fr; gap: 12px; }
+  .eh-footer { padding: 12px; }
+}
+
+/* RIO_BLANCO 16.4.1 - mejoras de legibilidad y ventana compacta.
+   Reglas de alta prioridad para evitar que estilos globales del Dashboard
+   expandan el expediente hasta ocupar toda la ventana. */
+html body .eh-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  overflow: hidden !important;
+}
+html body .eh-overlay > section.eh-modal {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 0 1 760px !important;
+  width: min(760px, calc(100vw - 32px)) !important;
+  max-width: 760px !important;
+  min-width: 0 !important;
+  max-height: min(780px, 90dvh) !important;
+  height: auto !important;
+  margin: auto !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 16px !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .4) !important;
+  background: white !important;
+}
+html body .eh-overlay .eh-modal .eh-header {
+  flex: 0 0 auto !important;
+  background: #103858 !important;
+  padding: 20px 23px !important;
+}
+html body .eh-overlay .eh-modal .eh-header h2 {
+  color: #fff !important;
+  font-size: clamp(21px, 2.2vw, 27px) !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  margin: 7px 0 !important;
+}
+html body .eh-overlay .eh-modal .eh-header p {
+  color: #e1f0ff !important;
+  opacity: 1 !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+html body .eh-overlay .eh-modal .eh-header span {
+  color: #b7e0ff !important;
+}
+html body .eh-overlay .eh-modal .eh-contenido {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 20px 24px !important;
+  overscroll-behavior: contain;
+}
+html body .eh-overlay .eh-modal .eh-contenido h3 {
+  font-size: 15px !important;
+  color: #123f70 !important;
+  margin: 20px 0 11px !important;
+}
+html body .eh-overlay .eh-modal .eh-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 15px 18px !important;
+}
+html body .eh-overlay .eh-modal .eh-campo strong {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  color: #123f70 !important;
+}
+html body .eh-overlay .eh-modal .eh-campo span {
+  font-size: 11px !important;
+  color: #54738f !important;
+}
+html body .eh-overlay .eh-modal .eh-linea-tiempo li {
+  margin-bottom: 16px !important;
+}
+html body .eh-overlay .eh-modal .eh-footer {
+  flex: 0 0 auto !important;
+  background: #f5f9fc !important;
+  padding: 12px 22px !important;
+}
+@media (max-width: 600px) {
+  html body .eh-overlay { padding: 8px !important; }
+  html body .eh-overlay > section.eh-modal {
+    width: calc(100vw - 16px) !important;
+    max-width: calc(100vw - 16px) !important;
+    max-height: 95dvh !important;
+    border-radius: 12px !important;
+  }
+  html body .eh-overlay .eh-modal .eh-header,
+  html body .eh-overlay .eh-modal .eh-contenido { padding: 16px !important; }
+  html body .eh-overlay .eh-modal .eh-grid { grid-template-columns: 1fr !important; gap: 11px !important; }
+  html body .eh-overlay .eh-modal .eh-footer { padding: 12px !important; }
+}

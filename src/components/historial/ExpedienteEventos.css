@@ -1,0 +1,54 @@
+/* PASO 16.6: detalles visuales de acontecimientos procedentes de Supabase */
+.eh-modal .eh-eventos-subtitulo {
+  margin: -3px 0 15px;
+  color: #4d708c;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.eh-modal .eh-eventos-estado,
+.eh-modal .eh-eventos-vacio {
+  padding: 14px 15px;
+  border: 1px solid #d9e7f2;
+  border-radius: 9px;
+  background: #f4f9fd;
+  color: #315a7b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.eh-modal .eh-tipo-evento {
+  display: inline-block;
+  width: fit-content;
+  margin: 6px 0;
+  padding: 3px 9px;
+  border-radius: 14px;
+  background: #e5f1fc;
+  color: #14558b;
+  font-size: 10px;
+  font-weight: 800;
+}
+.eh-modal .eh-origen-evento {
+  display: block;
+  margin-top: 5px;
+  color: #6685a0;
+  font-size: 11px;
+}
+.eh-modal .eh-ver-mas-eventos {
+  display: block;
+  margin: 12px auto 16px;
+  padding: 10px 15px;
+  border: 1px solid #c6d9ea;
+  border-radius: 8px;
+  background: #eaf4fd;
+  color: #14558b;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.eh-modal .eh-ver-mas-eventos:hover:not(:disabled) {
+  background: #1769bd;
+  color: white;
+}
+.eh-modal .eh-ver-mas-eventos:disabled {
+  cursor: wait;
+  opacity: .65;
+}

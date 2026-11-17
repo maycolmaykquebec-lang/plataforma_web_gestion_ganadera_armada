@@ -1,0 +1,109 @@
+/* RIO_BLANCO - PASO 17.1 | CSS aislado y responsive para Control Sanitario */
+.cs-pagina { width: 100%; min-width: 0; color: #123f70; font-family: Arial, Helvetica, sans-serif; }
+.cs-pagina *, .cs-pagina *::before, .cs-pagina *::after { box-sizing: border-box; }
+.cs-aviso {
+  display: flex; gap: 5px; flex-wrap: wrap; align-items: baseline;
+  margin-bottom: 12px; padding: 12px 15px;
+  border-radius: 9px; background: #fff2c9; border: 1px solid #f0b956;
+  color: #704600; font-size: 12px; line-height: 1.45;
+}
+.cs-portada {
+  position: relative; min-height: 162px; display: flex; flex-direction: column;
+  justify-content: center; align-items: flex-start; gap: 8px;
+  border-radius: 12px; margin-bottom: 14px; padding: 23px 26px;
+  background-color: #113858; background-size: cover; background-position: center;
+  color: #fff; overflow: hidden;
+}
+.cs-sobretitulo, .cs-portada small { font-size: 10px; font-weight: 800; letter-spacing: 1.3px; color: #c6e6fa; }
+.cs-portada h1 { margin: 0; color: #fff !important; font-size: clamp(26px, 3vw, 35px); line-height: 1.16; }
+.cs-portada p { margin: 0; color: #edf7ff; font-size: 13px; line-height: 1.55; max-width: 780px; }
+.cs-portada small { margin-top: 5px; }
+.cs-panel { background: #fff; border: 1px solid #d3e1ee; border-radius: 10px; padding: 18px 19px; margin-top: 13px; min-width: 0; }
+.cs-panel-intro { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+.cs-panel-intro h2 { margin: 0 0 5px; font-size: 16px; line-height: 1.3; color: #103d70; }
+.cs-panel-intro p { margin: 0; color: #54718d; font-size: 12px; line-height: 1.5; }
+.cs-solo-lectura { background: #e8f3fe; color: #195b93; border-radius: 18px; padding: 7px 11px; font-size: 11px; font-weight: 800; }
+.cs-filtros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: 12px; align-items: end; }
+.cs-campo { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.cs-campo label { font-size: 11px; color: #32597c; font-weight: 800; }
+.cs-campo select, .cs-campo input {
+  width: 100%; min-width: 0; min-height: 42px; padding: 10px 11px;
+  border: 1px solid #bad0e6; border-radius: 7px; background: #fff;
+  color: #153d65; font-size: 13px;
+}
+.cs-botones { display: flex; flex-wrap: wrap; gap: 8px; }
+.cs-botones button, .cs-actualizar, .cs-enlace-ficha, .cs-animal button, .cs-paginacion button {
+  border: 1px solid #b7cee4; border-radius: 7px; padding: 10px 13px;
+  min-height: 42px; font-size: 12px; font-weight: 800; cursor: pointer;
+}
+.cs-botones button { min-width: 90px; }
+.cs-primario { background: #1769bd; border-color: #1769bd !important; color: #fff; }
+.cs-secundario, .cs-actualizar, .cs-enlace-ficha, .cs-paginacion button { background: #f1f7fd; color: #14518a; }
+.cs-botones button:hover, .cs-actualizar:hover:not(:disabled), .cs-enlace-ficha:hover, .cs-animal button:hover, .cs-paginacion button:hover:not(:disabled) { filter: brightness(.94); }
+.cs-pagina button:focus-visible, .cs-pagina select:focus-visible, .cs-pagina input:focus-visible, .cs-tabla-scroll:focus-visible { outline: 3px solid #84c6ff; outline-offset: 2px; }
+.cs-pagina button:disabled { opacity: .5; cursor: not-allowed; }
+.cs-error { padding: 8px 11px; margin: 8px 0; background: #fff0f0; color: #a32626; border-radius: 7px; font-size: 12px; }
+.cs-vacio, .cs-estado-carga { color: #587593; font-size: 13px; line-height: 1.6; }
+.cs-animales { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+.cs-animal { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; padding: 12px; border: 1px solid #dce8f2; background: #f7fbff; border-radius: 8px; }
+.cs-animal > div { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.cs-animal strong { color: #103e6e; font-size: 13px; overflow-wrap: anywhere; }
+.cs-animal small { font-size: 11px; color: #58738d; line-height: 1.5; }
+.cs-animal button { flex: 0 0 auto; }
+.cs-contador { display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; min-width: 23px; padding: 4px 7px; border-radius: 18px; background: #e7f2fd; color: #1760a1; font-size: 11px; vertical-align: 2px; }
+.cs-tabla-scroll { width: 100%; min-width: 0; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+.cs-tabla { width: 100%; min-width: 1040px; border-collapse: collapse; text-align: left; font-size: 12px; }
+.cs-tabla thead { background: #e1eef9; }
+.cs-tabla th { padding: 12px 10px; font-size: 10px; letter-spacing: .25px; color: #174d7c; text-transform: uppercase; white-space: nowrap; }
+.cs-tabla td { padding: 11px 10px; border-bottom: 1px solid #dae7f1; color: #325571; vertical-align: middle; max-width: 300px; overflow-wrap: anywhere; line-height: 1.4; }
+.cs-tabla tbody tr:hover { background: #f6faff; }
+.cs-tabla-vacia { text-align: center; padding: 20px 12px !important; color: #637f98 !important; }
+.cs-enlace-ficha { white-space: nowrap; min-height: 35px; padding: 8px 10px; }
+.cs-paginacion { margin-top: 15px; padding-top: 14px; border-top: 1px solid #dce8f2; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.cs-paginacion > span { font-size: 12px; color: #557390; }
+.cs-paginacion-botones { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; }
+.cs-paginacion-botones strong { font-size: 12px; white-space: nowrap; color: #173d66; }
+.cs-nota { color: #617a93; font-size: 11px; line-height: 1.65; margin: 14px 0 0; }
+.cs-nota code { font-size: 11px; }
+@media (max-width: 1280px) { .cs-filtros { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cs-botones button { flex: 1; } }
+@media (max-width: 800px) { .cs-portada { padding: 20px; } .cs-animales { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  .cs-pagina { width: 100%; }
+  .cs-aviso { padding: 10px 11px; }
+  .cs-portada { min-height: 175px; padding: 19px 17px; gap: 9px; }
+  .cs-portada h1 { font-size: clamp(24px, 7vw, 29px); }
+  .cs-portada p { font-size: 12px; }
+  .cs-panel { padding: 14px 12px; }
+  .cs-panel-intro { align-items: flex-start; }
+  .cs-filtros { grid-template-columns: minmax(0, 1fr); }
+  .cs-botones { width: 100%; }
+  .cs-botones button { min-width: 0; flex: 1; }
+  .cs-animal { align-items: flex-start; flex-direction: column; }
+  .cs-animal button { width: 100%; }
+  .cs-paginacion { flex-direction: column; align-items: stretch; }
+  .cs-paginacion-botones { justify-content: space-between; }
+  .cs-paginacion-botones button { flex: 1; }
+  .cs-tabla { min-width: 980px; }
+}
+@media (max-width: 360px) { .cs-botones { flex-direction: column; } .cs-paginacion-botones strong { width: 100%; text-align: center; order: -1; } }
+
+/* RIO_BLANCO PASO 17.7 - Ajustes finales */
+/* Complemento responsive aislado: no altera la logica de React ni Supabase. */
+.cs-pagina .cs-resultado-busqueda .cs-animal-acciones { min-width: 0; }
+.cs-pagina .cs-nota { overflow-wrap: anywhere; }
+.cs-pagina .cs-tabla-scroll { scrollbar-gutter: stable; }
+@media (max-width: 640px) {
+  .cs-pagina .cs-panel-intro .cs-actualizar { width: 100%; }
+  .cs-pagina .cs-resultado-busqueda .cs-animal-acciones {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    gap: 8px;
+  }
+  .cs-pagina .cs-resultado-busqueda .cs-animal-acciones button {
+    min-width: 0;
+    width: 100%;
+  }
+  .cs-pagina .cs-solo-lectura { max-width: 100%; }
+}
+

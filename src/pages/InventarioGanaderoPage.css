@@ -1,0 +1,76 @@
+.rio_blanco-inv{color:#0a345c;width:100%;max-width:100%;box-sizing:border-box;padding:16px 18px 34px;background:#edf4fb;font-family:inherit}
+.rio_blanco-inv *{box-sizing:border-box}
+.rio_blanco-inv-aviso{border:1px solid #f0bd4d;background:#fff2c9;color:#754600;border-radius:8px;font-size:13px;padding:12px 15px;margin-bottom:13px}
+.rio_blanco-inv-hero{color:#fff;border-radius:16px;padding:30px 28px;background:linear-gradient(110deg,#09233f 0%,#133f63 65%,#38769b 100%);margin-bottom:14px}
+.rio_blanco-inv-kicker{font-weight:800;font-size:11px;letter-spacing:1.6px;color:#9dd2f5}
+.rio_blanco-inv-hero h1{font-size:clamp(29px,3.5vw,44px);margin:10px 0 6px;line-height:1.1;color:white}
+.rio_blanco-inv-hero p{color:#e1edf6;line-height:1.5;margin:0 0 16px;font-size:14px}
+.rio_blanco-inv-hero-pill{display:inline-block;border:1px solid #7ba9c8;background:#204c70;color:#fff;padding:6px 12px;border-radius:24px;font-size:12px}
+.rio_blanco-inv-panel{background:white;border:1px solid #c9dcf0;border-radius:12px;padding:20px;margin-bottom:14px;min-width:0}
+.rio_blanco-inv-panel-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.rio_blanco-inv h2{margin:0;color:#0b3e6f;font-weight:800;font-size:22px}
+.rio_blanco-inv h3{font-size:15px;margin:20px 0 12px;color:#11436f}
+.rio_blanco-inv-panel-head p{color:#5c7390;font-size:13px;margin:8px 0 0;line-height:1.45}
+.rio_blanco-inv-filtros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.rio_blanco-inv-filtros label{font-weight:700;color:#16446c;font-size:12px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.rio_blanco-inv-filtros select,.rio_blanco-inv-filtros input{width:100%;min-width:0;height:43px;border:1px solid #b8d2ed;border-radius:8px;background:white;color:#0d3458;padding:0 12px;font:inherit;font-size:14px}
+.rio_blanco-inv-filtros select:focus-visible,.rio_blanco-inv-filtros input:focus-visible,.rio_blanco-inv button:focus-visible{outline:3px solid #67a7ef;outline-offset:2px}
+.rio_blanco-inv-actions{display:flex;justify-content:flex-end;margin-top:13px}
+.rio_blanco-inv button{cursor:pointer;font-family:inherit}
+.rio_blanco-inv button:disabled{opacity:.55;cursor:not-allowed}
+.rio_blanco-inv-secondary,.rio_blanco-inv-paginacion button{border:1px solid #adcae8;border-radius:8px;background:#eff6ff;color:#0a4b87;font-weight:700;padding:10px 14px;font-size:13px}
+.rio_blanco-inv-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.rio_blanco-inv-kpi{border:1px solid #d3e2f1;background:#f7fbff;border-radius:12px;padding:17px 13px;min-width:0}
+.rio_blanco-inv-kpi strong{display:block;color:#0c4d8a;font-size:clamp(23px,2.4vw,34px);line-height:1.1}
+.rio_blanco-inv-kpi span{color:#5b7188;font-size:12px;display:block;margin-top:8px}
+.rio_blanco-inv-especies{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.rio_blanco-inv-especie{display:flex;align-items:flex-start;flex-direction:column;border:1px solid #295c82;border-radius:11px;background:linear-gradient(115deg,#102d4a,#2c617f);color:white;padding:17px;text-align:left;min-width:0;min-height:114px;gap:4px}
+.rio_blanco-inv-especie.elegida{outline:3px solid #3aa1ea;outline-offset:1px}
+.rio_blanco-inv-especie-titulo{font-weight:700;font-size:13px}
+.rio_blanco-inv-especie strong{font-size:24px;margin-top:4px}
+.rio_blanco-inv-especie small{font-size:11px;color:#d7e8f4}
+.rio_blanco-inv-clases{display:flex;gap:9px;flex-wrap:wrap}
+.rio_blanco-inv-clases span{background:#eaf4ff;border:1px solid #cce0f5;border-radius:30px;padding:7px 12px;font-size:12px}
+.rio_blanco-inv-total{border-radius:50px;background:#e5f3ff;color:#155787;padding:8px 13px;font-size:12px;font-weight:700}
+.rio_blanco-inv-tabla-scroll{overflow-x:auto;max-width:100%;overscroll-behavior-x:contain}
+.rio_blanco-inv table{border-collapse:collapse;min-width:900px;width:100%;text-align:left}
+.rio_blanco-inv th{background:#e1effa;color:#123e66;font-size:11px;text-transform:uppercase;letter-spacing:.2px;padding:12px}
+.rio_blanco-inv td{border-bottom:1px solid #d7e5f2;color:#1b4a6e;padding:13px 12px;font-size:13px;white-space:nowrap}
+.rio_blanco-inv-estado{background:#f4e5e2;color:#993b32;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.rio_blanco-inv-estado.activo{background:#dff5e8;color:#17663f}
+.rio_blanco-inv-vacio{text-align:center!important;padding:22px;color:#637c91!important;font-size:13px}
+.rio_blanco-inv-paginacion{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;color:#456a88;font-size:12px}
+.rio_blanco-inv-paginacion>div{display:flex;gap:8px}
+.rio_blanco-inv-nota{font-size:12px;line-height:1.6;color:#647e96;margin:18px 0 0}
+.rio_blanco-inv-nota code{font-size:11px}
+.rio_blanco-inv-error{border:1px solid #e3a4a4;background:#fff1f1;color:#8a2727;border-radius:9px;padding:14px;margin-bottom:15px;font-size:13px}
+@media(max-width:1100px){.rio_blanco-inv-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.rio_blanco-inv-especies{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.rio_blanco-inv{padding:12px 9px 25px}.rio_blanco-inv-panel{padding:15px 13px}.rio_blanco-inv-hero{padding:24px 18px}.rio_blanco-inv-filtros{grid-template-columns:repeat(2,minmax(0,1fr))}.rio_blanco-inv-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.rio_blanco-inv h2{font-size:19px}}
+@media(max-width:480px){.rio_blanco-inv-filtros{grid-template-columns:1fr}.rio_blanco-inv-especies{grid-template-columns:1fr}.rio_blanco-inv-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.rio_blanco-inv-panel-head{align-items:stretch}.rio_blanco-inv-panel-head .rio_blanco-inv-secondary{width:100%}.rio_blanco-inv-paginacion{flex-direction:column;align-items:stretch}.rio_blanco-inv-paginacion>div{width:100%}.rio_blanco-inv-paginacion button{flex:1}}
+
+.rio_blanco-inv-primary{border:1px solid #1562a9;border-radius:8px;background:#1767bc;color:#fff;font-weight:750;padding:11px 16px;font-size:13px}
+.rio_blanco-inv-head-acciones{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.rio_blanco-inv-bloques{display:grid;gap:10px}
+.rio_blanco-inv-bloque{background:#fbfdff;border:1px solid #d5e4f4;border-radius:10px;min-width:0;overflow:hidden}
+.rio_blanco-inv-bloque summary{display:flex;justify-content:space-between;gap:12px;align-items:center;cursor:pointer;list-style:none;padding:15px 16px;color:#134471}
+.rio_blanco-inv-bloque summary::-webkit-details-marker{display:none}
+.rio_blanco-inv-bloque summary strong{font-size:14px;display:block}
+.rio_blanco-inv-bloque summary small{display:block;color:#5c7692;font-size:11px;margin-top:5px}
+.rio_blanco-inv-expansion{color:#1263a8;font-size:12px;font-weight:700;white-space:nowrap}
+.rio_blanco-inv-bloque[open] .rio_blanco-inv-expansion{visibility:hidden}
+.rio_blanco-inv-bloque-cuerpo{padding:0 15px 15px}
+.rio_blanco-inv-bloque-cuerpo>.rio_blanco-inv-secondary{display:block;margin:0 0 12px auto}
+.rio_blanco-inv-bloque table{min-width:780px}
+@media(max-width:480px){.rio_blanco-inv-head-acciones{width:100%}.rio_blanco-inv-head-acciones .rio_blanco-inv-primary{width:100%}.rio_blanco-inv-bloque summary{align-items:flex-start;flex-direction:column}}
+
+/* RIO_BLANCO PASO 19.3: modulo AF-9 provisional y mejora de contraste */
+.rio_blanco-inv .rio_blanco-inv-hero h1{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.2)}
+.rio_blanco-inv-af9-badge{font-size:11px;font-weight:800;letter-spacing:.3px;background:#fff0ca;border:1px solid #efc363;color:#7b4e03;border-radius:50px;padding:8px 11px;white-space:nowrap}
+.rio_blanco-inv-af9-filtros{display:grid;grid-template-columns:1fr 1.25fr auto;align-items:end;gap:12px}
+.rio_blanco-inv-af9-filtros label{display:flex;flex-direction:column;gap:7px;min-width:0;color:#17466e;font-size:12px;font-weight:700}
+.rio_blanco-inv-af9-filtros input,.rio_blanco-inv-af9-filtros select{height:43px;width:100%;min-width:0;border:1px solid #b8d2ed;border-radius:8px;color:#0d3458;background:#fff;padding:0 12px;font:inherit;font-size:14px}
+.rio_blanco-inv-af9-filtros button{min-height:43px}
+.rio_blanco-inv-af9-advertencia{color:#795109;background:#fff3cf;border:1px solid #f0cf78;border-radius:9px;font-size:12px;line-height:1.5;padding:11px 13px;margin:14px 0 0}
+.rio_blanco-inv-af9-mensaje{color:#0f4b80;background:#e7f3ff;padding:10px 13px;border-radius:8px;font-size:12px;margin:12px 0 0}
+@media(max-width:1000px){.rio_blanco-inv-af9-filtros{grid-template-columns:repeat(2,minmax(0,1fr))}.rio_blanco-inv-af9-filtros button{grid-column:1 / -1}}
+@media(max-width:590px){.rio_blanco-inv-af9-filtros{grid-template-columns:1fr}.rio_blanco-inv-af9-filtros button{grid-column:auto}.rio_blanco-inv-af9-badge{white-space:normal}}

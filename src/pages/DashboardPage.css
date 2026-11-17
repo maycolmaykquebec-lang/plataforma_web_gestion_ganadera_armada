@@ -1,0 +1,358 @@
+.rio_blanco-dashboard {
+  width: 100%;
+  max-width: none;
+  color: #123f70;
+}
+
+.rio_blanco-warning {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 13px 16px;
+  margin-bottom: 12px;
+  border: 1px solid #f1b84f;
+  border-radius: 9px;
+  background: #fff3ce;
+  color: #714300;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.rio_blanco-hero {
+  position: relative;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 36px;
+  border-radius: 20px;
+  background:
+    linear-gradient(100deg, rgba(5, 24, 48, .98),
+    rgba(11, 48, 84, .91) 48%,
+    rgba(21, 83, 124, .85));
+  color: white;
+  box-shadow: 0 12px 30px rgba(5, 25, 49, .12);
+}
+
+.rio_blanco-hero-content {
+  position: relative;
+  max-width: 760px;
+  z-index: 1;
+}
+
+.rio_blanco-eyebrow {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #d7eafa;
+}
+
+.rio_blanco-hero h1 {
+  margin: 0;
+  color: white;
+  font-size: clamp(48px, 5vw, 76px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: 1px;
+}
+
+.rio_blanco-hero h2 {
+  margin: 6px 0 12px;
+  font-size: clamp(22px, 2.5vw, 30px);
+  color: white;
+}
+
+.rio_blanco-hero p {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #e9f3ff;
+}
+
+.rio_blanco-hero-description {
+  max-width: 650px;
+  line-height: 1.6;
+}
+
+.rio_blanco-hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.rio_blanco-hero-actions button {
+  background: white;
+  color: #123f70;
+  border: 1px solid #dce6f0;
+  border-radius: 7px;
+  padding: 11px 16px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rio_blanco-hero-actions button + button {
+  background: rgba(255, 255, 255, .12);
+  color: white;
+  border-color: rgba(255, 255, 255, .6);
+}
+
+.rio_blanco-stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.rio_blanco-stat-card {
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  background: white;
+  border: 1px solid #d7e2ed;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(13, 46, 79, .04);
+}
+
+.rio_blanco-stat-number {
+  font-size: 32px;
+  line-height: 1.2;
+  color: #0b3b70;
+}
+
+.rio_blanco-stat-label {
+  margin-top: 7px;
+  color: #54708e;
+  font-size: 12px;
+}
+
+.rio_blanco-quick-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.rio_blanco-quick-actions button {
+  min-height: 38px;
+  padding: 10px 14px;
+  background: white;
+  border: 1px solid #d7e2ed;
+  border-radius: 6px;
+  color: #123f70;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rio_blanco-quick-actions button:first-child {
+  background: #1769bd;
+  border-color: #1769bd;
+  color: white;
+}
+
+.rio_blanco-dashboard button:disabled {
+  cursor: not-allowed;
+  opacity: .72;
+}
+
+.rio_blanco-section {
+  margin-top: 28px;
+}
+
+.rio_blanco-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.rio_blanco-section-heading h2 {
+  margin: 0 0 5px;
+  font-size: 18px;
+  color: #123f70;
+}
+
+.rio_blanco-section-heading p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.rio_blanco-total {
+  white-space: nowrap;
+  padding: 7px 12px;
+  border-radius: 20px;
+  background: #e2effb;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.rio_blanco-species-grid,
+.rio_blanco-units-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.rio_blanco-species-card {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 235px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background-color: #153b60;
+  background-position: center;
+  background-size: cover;
+  box-shadow: 0 10px 20px rgba(8, 32, 57, .12);
+  color: white;
+}
+
+.rio_blanco-species-card.selected {
+  border-color: #38bdf8;
+}
+
+.rio_blanco-species-content {
+  width: 100%;
+  padding: 20px;
+}
+
+.rio_blanco-species-icon {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 25px;
+}
+
+.rio_blanco-species-content h3 {
+  margin: 0 0 6px;
+  color: white;
+  font-size: 19px;
+}
+
+.rio_blanco-species-content p {
+  color: white;
+  margin: 0 0 12px;
+  font-size: 12px;
+}
+
+.rio_blanco-species-button {
+  padding: 10px 13px;
+  border: 1px solid rgba(255,255,255,.65);
+  border-radius: 7px;
+  background: rgba(255,255,255,.14);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rio_blanco-species-button:hover {
+  background: rgba(255,255,255,.28);
+}
+
+.rio_blanco-selection-info {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: #45617c;
+}
+
+.rio_blanco-unit-card {
+  padding: 24px;
+  background: white;
+  border: 1px solid #d7e2ed;
+  border-radius: 12px;
+}
+
+.rio_blanco-unit-symbol {
+  font-size: 27px;
+  color: #1769bd;
+}
+
+.rio_blanco-unit-card h3 {
+  margin: 12px 0 6px;
+  font-size: 18px;
+  color: #123f70;
+}
+
+.rio_blanco-unit-card p {
+  margin: 0 0 16px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.rio_blanco-unit-status {
+  font-size: 12px;
+  color: #54708e;
+}
+
+/* TABLET */
+@media (max-width: 1100px) {
+  .rio_blanco-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .rio_blanco-species-grid,
+  .rio_blanco-units-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* MOVIL */
+@media (max-width: 700px) {
+  .rio_blanco-hero {
+    padding: 25px;
+    min-height: 290px;
+  }
+
+  .rio_blanco-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .rio_blanco-stat-card {
+    padding: 15px;
+  }
+
+  .rio_blanco-stat-number {
+    font-size: 27px;
+  }
+
+  .rio_blanco-species-grid,
+  .rio_blanco-units-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rio_blanco-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .rio_blanco-hero p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .rio_blanco-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .rio_blanco-warning {
+    font-size: 12px;
+  }
+
+  .rio_blanco-hero-actions,
+  .rio_blanco-quick-actions {
+    flex-direction: column;
+  }
+
+  .rio_blanco-hero-actions button,
+  .rio_blanco-quick-actions button {
+    width: 100%;
+  }
+}

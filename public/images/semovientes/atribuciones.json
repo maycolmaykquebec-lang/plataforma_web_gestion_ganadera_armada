@@ -1,0 +1,80 @@
+[
+  {
+    "especie": "bovino",
+    "archivo": "/images/semovientes/bovino.jpg",
+    "titulo": "Cattle in a Pasture",
+    "autor": "Alabama Extension",
+    "fuente": "Wikimedia Commons",
+    "pagina_url": "https://commons.wikimedia.org/wiki/File:Cattle_in_a_Pasture.jpg",
+    "licencia": "CC0",
+    "licencia_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "imagen_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Cattle_in_a_Pasture.jpg/960px-Cattle_in_a_Pasture.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "adaptaciones": "Miniatura generada por Wikimedia; la tarjeta muestra un recorte visual mediante CSS.",
+    "bytes": 301211
+  },
+  {
+    "especie": "equino",
+    "archivo": "/images/semovientes/equino.jpg",
+    "titulo": "Horse in Tall Grass",
+    "autor": "Carl Young",
+    "fuente": "Wikimedia Commons",
+    "pagina_url": "https://commons.wikimedia.org/wiki/File:Horse_in_Tall_Grass.jpg",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "imagen_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Horse_in_Tall_Grass.jpg/960px-Horse_in_Tall_Grass.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "adaptaciones": "Miniatura generada por Wikimedia; la tarjeta muestra un recorte visual mediante CSS.",
+    "bytes": 121479
+  },
+  {
+    "especie": "caprino",
+    "archivo": "/images/semovientes/caprino.jpg",
+    "titulo": "Kinder goat standing",
+    "autor": "Herr Beethoven",
+    "fuente": "Wikimedia Commons",
+    "pagina_url": "https://commons.wikimedia.org/wiki/File:Kinder_goat_standing.jpg",
+    "licencia": "Public domain",
+    "licencia_url": "https://commons.wikimedia.org/wiki/Template:PD-self",
+    "imagen_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Kinder_goat_standing.jpg/500px-Kinder_goat_standing.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "adaptaciones": "Miniatura generada por Wikimedia; la tarjeta muestra un recorte visual mediante CSS.",
+    "bytes": 89329
+  },
+  {
+    "especie": "mular",
+    "archivo": "/images/semovientes/mular.jpg",
+    "titulo": "Equus asinus × Equus caballus - 1",
+    "autor": "Emőke Dénes",
+    "fuente": "Wikimedia Commons",
+    "pagina_url": "https://commons.wikimedia.org/wiki/File:Equus_asinus_%C3%97_Equus_caballus_-_1.jpg",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "imagen_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Equus_asinus_%C3%97_Equus_caballus_-_1.jpg/960px-Equus_asinus_%C3%97_Equus_caballus_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "adaptaciones": "Miniatura generada por Wikimedia; la tarjeta muestra un recorte visual mediante CSS.",
+    "bytes": 199354
+  },
+  {
+    "especie": "avicola",
+    "archivo": "/images/semovientes/avicola.jpg",
+    "titulo": "Free Range Chicken",
+    "autor": "safaritravelplus",
+    "fuente": "Wikimedia Commons",
+    "pagina_url": "https://commons.wikimedia.org/wiki/File:Free_Range_Chicken.jpg",
+    "licencia": "CC0",
+    "licencia_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "imagen_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f1/Free_Range_Chicken.jpg/960px-Free_Range_Chicken.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "adaptaciones": "Miniatura generada por Wikimedia; la tarjeta muestra un recorte visual mediante CSS.",
+    "bytes": 270930
+  },
+  {
+    "especie": "porcino",
+    "archivo": "/images/semovientes/porcino.jpg",
+    "titulo": "Farm-wildlife-herd-pasture-livestock-mammal-732554-pxhere",
+    "autor": "Anonymous",
+    "fuente": "Wikimedia Commons",
+    "pagina_url": "https://commons.wikimedia.org/wiki/File:Farm-wildlife-herd-pasture-livestock-mammal-732554-pxhere.jpg",
+    "licencia": "CC0",
+    "licencia_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "imagen_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Farm-wildlife-herd-pasture-livestock-mammal-732554-pxhere.jpg/960px-Farm-wildlife-herd-pasture-livestock-mammal-732554-pxhere.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "adaptaciones": "Miniatura generada por Wikimedia; la tarjeta muestra un recorte visual mediante CSS.",
+    "bytes": 150103
+  }
+]

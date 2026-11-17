@@ -1,0 +1,456 @@
+/* RIO_BLANCO - LOGIN INSTITUCIONAL DIVIDIDO */
+
+.rio_blanco-login {
+  width: 100%;
+  min-height: 100vh;
+  background: #0c2b49;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.rio_blanco-login-container {
+  display: grid;
+  grid-template-columns: 55% 45%;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* PANEL IZQUIERDO */
+
+.rio_blanco-presentation {
+  position: relative;
+  display: flex;
+  color: #ffffff;
+  background:
+    linear-gradient(135deg, #071d37 0%, #103c65 65%, #17659c 100%);
+  overflow: hidden;
+}
+
+.rio_blanco-presentation::after {
+  content: '';
+  position: absolute;
+  width: 430px;
+  height: 430px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 50%;
+  right: -200px;
+  top: 25%;
+  pointer-events: none;
+}
+
+.rio_blanco-presentation-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  padding: clamp(26px, 4vw, 65px);
+  display: flex;
+  flex-direction: column;
+  gap: 38px;
+}
+
+.rio_blanco-institution-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.rio_blanco-main-logos {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.rio_blanco-main-logos img {
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
+  padding: 5px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.96);
+}
+
+.rio_blanco-institution-name {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rio_blanco-institution-name strong {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .5px;
+}
+
+.rio_blanco-institution-name span {
+  font-size: 11px;
+  letter-spacing: .6px;
+  color: #d0e5f8;
+}
+
+.rio_blanco-project-label {
+  display: inline-block;
+  color: #98d4fd;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.rio_blanco-project h1 {
+  margin: 12px 0 4px;
+  font-size: clamp(36px, 5.2vw, 76px);
+  overflow-wrap: anywhere;
+  line-height: 1;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 2px;
+}
+
+.rio_blanco-project h2 {
+  max-width: 560px;
+  margin: 0 0 20px;
+  font-size: clamp(19px, 2.2vw, 28px);
+  line-height: 1.3;
+  color: #e6f2fd;
+}
+
+.rio_blanco-project-description {
+  max-width: 640px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #d3e5f4;
+}
+
+.rio_blanco-project-features {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.rio_blanco-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.rio_blanco-feature > span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(87, 194, 255, .18);
+  color: #9bdcff;
+}
+
+.rio_blanco-feature p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #dfedfa;
+}
+
+.rio_blanco-production-units {
+  border-top: 1px solid rgba(255,255,255,.18);
+  padding-top: 22px;
+}
+
+.rio_blanco-production-units h3 {
+  margin: 0 0 16px;
+  color: #c6e3f9;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.rio_blanco-production-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rio_blanco-production-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 8px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 12px;
+  background: rgba(255,255,255,.09);
+}
+
+.rio_blanco-production-unit img {
+  width: 85px;
+  height: 75px;
+  object-fit: contain;
+}
+
+.rio_blanco-production-unit span {
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  color: #ffffff;
+}
+
+/* PANEL DERECHO */
+
+.rio_blanco-access {
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rio_blanco-access-inner {
+  width: min(100%, 440px);
+  margin: auto;
+  padding: 50px 25px;
+}
+
+.rio_blanco-access-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.rio_blanco-access-icon {
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 20px;
+  border-radius: 18px;
+  background: #e6f2fc;
+  color: #1769bd;
+  font-size: 32px;
+}
+
+.rio_blanco-access-header > span {
+  color: #1769bd;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.rio_blanco-access-header h2 {
+  margin: 12px 0;
+  color: #103858;
+  font-size: clamp(25px, 3vw, 34px);
+}
+
+.rio_blanco-access-header p {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.rio_blanco-access-form {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.rio_blanco-access-form label {
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+}
+
+.rio_blanco-access-form input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.rio_blanco-access-form input:focus {
+  outline: 2px solid #93c5fd;
+  border-color: #1769bd;
+}
+
+.rio_blanco-access-form button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #1769bd;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.rio_blanco-access-form button:hover {
+  background: #10518e;
+}
+
+.rio_blanco-access-form button:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.rio_blanco-access-error {
+  color: #b42318;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.rio_blanco-access-notice {
+  margin-top: 34px;
+  padding: 18px;
+  border-radius: 10px;
+  background: #f0f6fc;
+  border: 1px solid #dce9f5;
+}
+
+.rio_blanco-access-notice strong {
+  color: #1a4a76;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.rio_blanco-access-notice p {
+  margin: 7px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.rio_blanco-access-footer {
+  padding: 20px;
+  text-align: center;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* TABLET */
+
+@media (max-width: 1100px) {
+  .rio_blanco-login-container {
+    grid-template-columns: 50% 50%;
+  }
+
+  .rio_blanco-institution-header {
+    flex-wrap: wrap;
+  }
+
+  .rio_blanco-project-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* MOVIL */
+
+@media (max-width: 760px) {
+  .rio_blanco-login-container {
+    grid-template-columns: 1fr;
+  }
+
+  .rio_blanco-presentation-inner {
+    gap: 24px;
+    padding: 28px 22px;
+  }
+
+  .rio_blanco-institution-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .rio_blanco-main-logos img {
+    width: 65px;
+    height: 65px;
+  }
+
+  .rio_blanco-project {
+    text-align: center;
+  }
+
+  .rio_blanco-project h1 {
+    font-size: clamp(32px, 9vw, 58px);
+  }
+
+  .rio_blanco-project-description {
+    font-size: 13px;
+  }
+
+  .rio_blanco-project-features {
+    text-align: left;
+  }
+
+  .rio_blanco-production-units h3 {
+    text-align: center;
+  }
+
+  .rio_blanco-production-unit img {
+    width: 65px;
+    height: 55px;
+  }
+
+  .rio_blanco-access-inner {
+    padding: 42px 25px;
+  }
+}
+
+@media (max-width: 380px) {
+  .rio_blanco-main-logos img {
+    width: 55px;
+    height: 55px;
+  }
+
+  .rio_blanco-production-unit {
+    padding: 8px 4px;
+  }
+
+  .rio_blanco-production-unit img {
+    width: 50px;
+    height: 48px;
+  }
+
+  .rio_blanco-production-unit span {
+    font-size: 9px;
+  }
+}
+
+/* UNIDADES OPERATIVAS EN TEXTO */
+
+.rio_blanco-production-names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.rio_blanco-production-names span {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.rio_blanco-production-names span::before {
+  content: "•";
+  color: #79cfff;
+  margin-right: 10px;
+}
+
+@media (max-width: 760px) {
+  .rio_blanco-production-names {
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .rio_blanco-production-names span {
+    font-size: 12px;
+  }
+}
