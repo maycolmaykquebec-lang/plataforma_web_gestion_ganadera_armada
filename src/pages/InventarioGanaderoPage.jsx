@@ -67,7 +67,7 @@ export default function InventarioGanaderoPage() {
         for (let desde = 0; desde < MAX_FILAS; desde += TAMANO_BLOQUE) {
           const { data, error: fallo } = await supabase
             .from('semovientes')
-            .select('id,codigo,unidad_id,especie,categoria,sexo,raza,estado,fecha_nacimiento,fecha_ingreso')
+            .select('id,codigo,codigo_activo,marca_ancla,unidad_id,especie,categoria,sexo,raza,estado,fecha_nacimiento,fecha_ingreso')
             .order('id', { ascending: true })
             .range(desde, desde + TAMANO_BLOQUE - 1);
           if (fallo) throw fallo;
@@ -261,8 +261,8 @@ export default function InventarioGanaderoPage() {
         </div>
       </section>
 
-      {/* RIO_BLANCO PASO 19.3: plantilla AF9 original, exclusivamente nombres y cargos editables. */}
-      <AF9OriginalPanel animales={filasGeneral} unidades={unidades} unidadSeleccionada={unidad} disponible={exportacionDisponible} />
+      {/* AF-09 para las tres unidades operativas; selección aislada de la consulta general. */}
+      <AF9OriginalPanel animales={animales} unidades={unidades} unidadSeleccionada={unidad} disponible={exportacionDisponible} />
 
       <section className="rio_blanco-inv-panel" aria-labelledby="inv-tabla">
         <div className="rio_blanco-inv-panel-head"><div><h2 id="inv-tabla">Listado filtrado del inventario</h2><p>{cargando ? 'Consultando datos…' : error ? 'Consulta no disponible.' : `${filtrados.length.toLocaleString('es-BO')} semovientes coinciden con los filtros.`}</p></div><div className="rio_blanco-inv-head-acciones"><span className="rio_blanco-inv-total">{cargando || error ? '—' : filtrados.length} encontrados</span><button type="button" className="rio_blanco-inv-primary" disabled={!exportacionDisponible || filtrados.length === 0} onClick={() => descargarCSV(filtrados, 'Inventario_Filtrado')}>Exportar CSV filtrado</button></div></div>

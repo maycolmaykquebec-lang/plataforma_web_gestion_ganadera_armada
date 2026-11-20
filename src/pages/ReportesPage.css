@@ -1,0 +1,13 @@
+/* V4.5. Estilos aislados para no modificar otros módulos. */
+.reporte-page .reporte-filtros { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.reporte-page .reporte-panel-graficos > .gestion-heading { align-items: flex-start; margin-bottom: 18px; }
+.reporte-page .reporte-panel-graficos > .gestion-heading h2 { margin-bottom: 3px; }
+.reporte-page .reporte-panel-graficos > .gestion-heading p { margin: 0; }
+.reporte-graficos-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.reporte-grafico { min-width: 0; margin: 0; border: 1px solid #DCE8F2; border-radius: 15px; overflow: hidden; background: #fff; box-shadow: 0 3px 12px rgba(14,57,90,.04); }
+.reporte-grafico img { display: block; width: 100%; height: auto; aspect-ratio: 11/6; background: white; }
+.reporte-grafico figcaption { padding: 8px 14px 12px; font-size: 12px; color: #50718A; text-align: center; border-top: 1px solid #F0F4F8; }
+.reporte-page .gestion-kpi { min-width: 0; }
+@media(max-width: 1100px) { .reporte-page .reporte-filtros { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media(max-width: 720px) { .reporte-graficos-grid { grid-template-columns: 1fr; } }
+@media(max-width: 600px) { .reporte-page .reporte-filtros { grid-template-columns: 1fr; } }

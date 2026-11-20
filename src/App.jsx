@@ -3,7 +3,7 @@ import EvaluacionDescartePage from './pages/EvaluacionDescartePage'
 import ReportesPage from './pages/ReportesPage'
 import UsuariosPage from './pages/UsuariosPage'
 import AuditoriaPage from './pages/AuditoriaPage'
-import RespaldosPage from './pages/RespaldosPage'
+import CalendarioActividadesPage from './pages/CalendarioActividadesPage'
 import { menuPermitido } from './auth/permisos'
 import { usePerfil } from './contexts/PerfilContext'
 import MovimientosPage from './pages/MovimientosPage'
@@ -42,7 +42,7 @@ function App() {
             <Route path="/reportes" element={<Modulo id="reportes"><ReportesPage /></Modulo>} />
             <Route path="/usuarios" element={<Modulo id="usuarios"><UsuariosPage /></Modulo>} />
             <Route path="/auditoria" element={<Modulo id="auditoria"><AuditoriaPage /></Modulo>} />
-            <Route path="/respaldos" element={<Modulo id="respaldos"><RespaldosPage /></Modulo>} />
+            <Route path="/calendario" element={<Modulo id="calendario"><CalendarioActividadesPage /></Modulo>} />
             <Route path="/inventario" element={<InventarioGanaderoPage />} />
             <Route path="/reproductivo" element={<ControlReproductivoPage />} />
           </Route>

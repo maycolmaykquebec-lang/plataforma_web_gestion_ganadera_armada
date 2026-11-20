@@ -14,7 +14,7 @@ export function puedeRegistrar(perfil) {
 export function consultaGeneral(perfil) {
   return perfilValido(perfil) && perfil.rol.codigo !== 'RESP_UNIDAD'
 }
-const comunes = ['inicio', 'semovientes', 'historial', 'sanidad', 'reproduccion', 'movimientos', 'altas', 'inventario', 'descarte', 'reportes', 'respaldos']
+const comunes = ['inicio', 'semovientes', 'historial', 'sanidad', 'reproduccion', 'movimientos', 'altas', 'inventario', 'descarte', 'reportes', 'calendario']
 export function menuPermitido(perfil) {
   if (!perfilValido(perfil)) return []
   const rol = perfil.rol.codigo

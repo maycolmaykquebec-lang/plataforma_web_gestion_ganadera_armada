@@ -15,7 +15,7 @@ const modulos = [
   { id: 'reportes', nombre: 'Reportes', ruta: '/reportes', icono: '▥' },
   { id: 'usuarios', nombre: 'Administración de Usuarios', ruta: '/usuarios', icono: '♙' },
   { id: 'auditoria', nombre: 'Auditoría', ruta: '/auditoria', icono: '◷' },
-  { id: 'respaldos', nombre: 'Respaldos', ruta: '/respaldos', icono: '☁' }
+  { id: 'calendario', nombre: 'Calendario de actividades', ruta: '/calendario', icono: '▤' }
 ]
 
 

@@ -20,3 +20,7 @@
 .rio_blanco-af9-original-mensaje{padding:12px 14px;border:1px solid #b9dec9;background:#eefaf2;border-radius:8px;color:#176039!important}
 .rio_blanco-inv .rio_blanco-inv-hero h1{color:#ffffff!important}
 @media(max-width:800px){.rio_blanco-af9-original-grid,.rio_blanco-af9-original-firmas{grid-template-columns:1fr}.rio_blanco-af9-original-pie button{width:100%}}
+
+/* AF-09 V4.3: resumen y aviso de validaciones accesibles */
+.rio_blanco-af9-original .rio_blanco-af9-original-info{line-height:1.5}
+.rio_blanco-af9-original .rio_blanco-af9-original-mensaje{margin-top:0}
