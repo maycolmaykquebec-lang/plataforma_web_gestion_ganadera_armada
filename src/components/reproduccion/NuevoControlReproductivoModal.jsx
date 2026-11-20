@@ -10,8 +10,8 @@ const ESPECIES = {
 }
 
 const TIPOS_MAMIFEROS = [
-  { id: 'monta', nombre: 'Servicio o monta' },
-  { id: 'inseminacion', nombre: 'Inseminación artificial' },
+  { id: 'monta', nombre: 'Servicio o monta', requiereHembra: true },
+  { id: 'inseminacion', nombre: 'Inseminación artificial', requiereHembra: true },
   { id: 'gestacion', nombre: 'Diagnóstico de gestación', requiereHembra: true },
   { id: 'parto', nombre: 'Parto', requiereHembra: true },
   { id: 'nacimiento', nombre: 'Registro de nacimiento', requiereHembra: true },
@@ -42,7 +42,7 @@ function esBovinoClasificadoTernero(animal) {
 
 const VACIO = {
   tipo: '', fecha: '', responsable: '', resultado: '',
-  reproductor: '', metodo: '', fechaProbable: '', cantidadCrias: '',
+  reproductor: '', reproductorId: '', metodo: '', fechaProbable: '', cantidadCrias: '',
   crias: '', huevos: '', huevosFertiles: '', nacidos: '',
   detalle: '', observaciones: '', proximoControl: ''
 }
@@ -72,6 +72,9 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
   const [errores, setErrores] = useState({})
   const [guardando, setGuardando] = useState(false)
   const [errorGuardado, setErrorGuardado] = useState('')
+  const [reproductores, setReproductores] = useState([])
+  const [cargandoMachos, setCargandoMachos] = useState(false)
+  const [errorMachos, setErrorMachos] = useState('')
   const guardandoRef = useRef(false)
   const modalRef = useRef(null)
   const primerCampo = useRef(null)
@@ -118,6 +121,33 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
       anterior?.focus?.()
     }
   }, [abierto, animal?.id])
+
+  // Se consulta SOLO los machos activos visibles dentro de la misma unidad y especie.
+  // La funcion SQL vuelve a verificar la vinculacion al guardar; el selector no reemplaza RLS.
+  useEffect(() => {
+    if (!abierto || animal?.sexo !== 'Hembra' || animal?.especie === 'avicola' || animal?.especie === 'mular') {
+      setReproductores([])
+      setErrorMachos('')
+      setCargandoMachos(false)
+      return
+    }
+    let activo = true
+    async function consultarMachos() {
+      setCargandoMachos(true)
+      setErrorMachos('')
+      const { data, error } = await supabase.from('semovientes')
+        .select('id,codigo,codigo_activo,categoria')
+        .eq('unidad_id', animal.unidad_id).eq('especie', animal.especie)
+        .eq('sexo', 'Macho').eq('estado', 'Activo')
+        .order('codigo', { ascending: true }).limit(500)
+      if (!activo) return
+      setReproductores(error ? [] : (data || []))
+      setErrorMachos(error ? 'No se pudo consultar los machos autorizados de esta unidad.' : '')
+      setCargandoMachos(false)
+    }
+    consultarMachos()
+    return () => { activo = false }
+  }, [abierto, animal?.id, animal?.unidad_id, animal?.especie, animal?.sexo])
 
   if (!abierto) return null
 
@@ -183,6 +213,9 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
     }
     if (datos.metodo.length > 150) erroresNuevos.metodo = 'Máximo 150 caracteres.'
     if (datos.reproductor.length > 80) erroresNuevos.reproductor = 'Máximo 80 caracteres.'
+    if (datos.tipo === 'monta' && !reproductores.some(m => String(m.id) === datos.reproductorId)) {
+      erroresNuevos.reproductorId = 'Seleccione un macho activo registrado en la misma unidad y especie.'
+    }
     if (datos.crias.length > 1500) erroresNuevos.crias = 'Máximo 1500 caracteres.'
     if (datos.observaciones.length > 1500) erroresNuevos.observaciones = 'Máximo 1500 caracteres.'
     setErrores(erroresNuevos)
@@ -191,6 +224,9 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
     const opcional = (valor) => valor.trim() || null
     // NO enviar id, registrado_por, registrado_en ni unidad_id.
     // El perfil y la pertenencia a la unidad se comprueban con RLS en PostgreSQL.
+    const machoSeleccionado = datos.tipo === 'monta'
+      ? reproductores.find(m => String(m.id) === datos.reproductorId)
+      : null
     const registro = {
       semoviente_id: animal.id,
       tipo_evento: datos.tipo,
@@ -198,7 +234,9 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
       responsable_reproductivo: datos.responsable.trim(),
       resultado: datos.resultado.trim(),
       detalle: datos.detalle.trim(),
-      reproductor_codigo: (servicio || gestacion || nacimiento) ? opcional(datos.reproductor) : null,
+      reproductor_codigo: machoSeleccionado ? machoSeleccionado.codigo
+        : (servicio || gestacion || nacimiento) ? opcional(datos.reproductor) : null,
+      reproductor_id: machoSeleccionado ? machoSeleccionado.id : null,
       metodo: (servicio || gestacion) ? opcional(datos.metodo) : null,
       fecha_parto_probable: gestacion ? (datos.fechaProbable || null) : null,
       cantidad_crias: nacimiento ? Number(datos.cantidadCrias) : null,
@@ -288,7 +326,7 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
               <p className="rcm-nota" role="note">Este semoviente está clasificado como {animal.categoria}. Para evitar registrar servicios, gestaciones o partos incompatibles con esta clasificación, solo se ofrecen evaluación y seguimiento reproductivo. Si la clasificación es incorrecta, solicite su corrección por la vía autorizada.</p>
             )}
             {animal.sexo === 'Macho' && (
-              <p className="rcm-nota">El ejemplar registrado es macho. Este formulario no ofrece eventos de gestación, parto o postura para el animal seleccionado.</p>
+              <p className="rcm-nota">Este ejemplar es macho. Para registrar una monta, abra el registro de la hembra correspondiente y seleccione a este macho como reproductor. Su contador se actualizará automáticamente.</p>
             )}
 
             <h3>2. Acontecimiento reproductivo</h3>
@@ -310,7 +348,22 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
               <>
                 <h3>3. Datos del servicio</h3>
                 <div className="rcm-grid">
-                  {campo('reproductor', 'Código del reproductor (si se conoce)', { placeholder: 'Ej.: RB-023' })}
+                  {datos.tipo === 'monta' ? (
+                    <div className="rcm-campo rcm-completo">
+                      <label htmlFor="rcm-reproductor-id">Macho reproductor de esta unidad *</label>
+                      <select id="rcm-reproductor-id" value={datos.reproductorId} disabled={guardando || cargandoMachos}
+                        onChange={e => cambiar('reproductorId', e.target.value)} aria-invalid={Boolean(errores.reproductorId)}>
+                        <option value="">{cargandoMachos ? 'Cargando reproductores…' : 'Seleccione un macho registrado'}</option>
+                        {reproductores.map(m => <option key={m.id} value={m.id}>
+                          {m.codigo_activo || m.codigo} · individual {m.codigo} · {m.categoria || 'Macho'}
+                        </option>)}
+                      </select>
+                      {errorMachos && <small className="rcm-error" role="alert">{errorMachos}</small>}
+                      {!cargandoMachos && !errorMachos && reproductores.length === 0 && <small className="rcm-nota">No hay machos activos disponibles en esta unidad y especie. Registre primero el semoviente macho.</small>}
+                      {errores.reproductorId && <small className="rcm-error" role="alert">{errores.reproductorId}</small>}
+                      <p className="rcm-nota">Se guardará una monta vinculada a esta hembra y a ese macho; el contador del macho aumentará automáticamente.</p>
+                    </div>
+                  ) : campo('reproductor', 'Código de referencia del reproductor (opcional)', { placeholder: 'Ej.: RB-023' })}
                   {campo('metodo', 'Método o procedencia', { placeholder: 'Ej.: monta natural' })}
                 </div>
               </>

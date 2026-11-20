@@ -1,0 +1,13 @@
+.rr-contenedor { margin-top: 10px; padding: 13px; border: 1px solid #cbddeb; border-radius: 9px; background: #fff; color: #15466f; }
+.rr-titulo { font-size: 12px; font-weight: 800; margin-bottom: 10px; }
+.rr-estadisticas { display: flex; flex-wrap: wrap; gap: 8px; }
+.rr-indicador { display: flex; flex: 1 1 135px; min-width: 115px; flex-direction: column; gap: 4px; border: 1px solid #e0eaf2; border-radius: 8px; background: #f4f8fd; padding: 10px; }
+.rr-indicador span { font-size: 10px; font-weight: 700; color: #50728e; }
+.rr-indicador strong { font-size: 23px; font-weight: 800; color: #154b77; }
+.rr-indicador .rr-fecha { font-size: 14px; padding-top: 8px; }
+.rr-indicador.rr-total { background: #e7f3ff; border-color: #c4dbf0; }
+.rr-explicacion { margin: 10px 0 0; font-size: 11px; line-height: 1.55; color: #57748e; }
+.rr-boton { background: #fff; border: 1px solid #a0c5e4; border-radius: 7px; color: #12568a; padding: 9px 11px; margin-top: 11px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.rr-boton:hover { background: #e9f4fd; }
+.rr-estado, .rr-error { font-size: 12px; padding: 9px; margin: 8px 0; }
+.rr-error { color: #9e2828; background: #ffecec; border-radius: 7px; }

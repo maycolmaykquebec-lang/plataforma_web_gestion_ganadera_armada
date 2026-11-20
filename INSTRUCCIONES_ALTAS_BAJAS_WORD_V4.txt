@@ -1,0 +1,58 @@
+ACTUALIZACIÓN V4 — ALTAS Y BAJAS: FOTOGRAFÍA DE BAJA + ACTA WORD
+Plataforma Web Gestión Ganadera — Río Blanco / Tamarinero / Mamoré
+
+CONTENIDO
+- Formulario Registrar baja: selección opcional de una fotografía de evidencia JPG/PNG/WebP, hasta 5 MB.
+- Al guardar: se registra la baja por RPC rb_registrar_baja y después se carga la foto privada al bucket bajas-fotos.
+- Ruta determinista de Storage: unidad_id/baja_id/evidencia.jpg. Se reutiliza EXACTAMENTE esta fotografía al descargar el acta.
+- Si falla la carga de foto, NO se duplica la baja: queda su ID y el mismo formulario permite reintentar.
+- En Bajas registradas -> Preparar documento: edita grados y nombres de Vaquero y Jefe, fecha de emisión del acta, número de acta, informe, descripción y lugar/causa.
+- Cargos institucionales fijos; membrete y ciudad cambian por unidad de la baja.
+- Descarga .docx Word auténtico, editable, utilizando la plantilla convertida del archivo .doc aportado.
+- La plantilla conserva estructura, tabla, bordes, encabezado, marca de agua y distribución. NO incluye firmas ni sellos originales de 2025 para evitar presentarlos como nuevas firmas o aprobaciones.
+- No modifica: Nuevo Registro, fotografías iniciales, Control Reproductivo ni los tres roles operativos.
+
+IMPORTANTE SOBRE SQL
+Ejecutar SOLO supabase/actualizaciones/05_fotografias_de_bajas.sql, previa revisión/respaldo y de preferencia prueba en una copia.
+NO repetir SQL 01, 02, 03. El script no elimina registros de animales ni bajas.
+Algunas instrucciones DROP POLICY IF EXISTS afectan SOLO políticas rb_bajas_fotos_* de este bucket: si reaplica esta migración, se regeneran esas reglas.
+Después ejecutar 06_verificar_fotografias_de_bajas.sql, de solo lectura.
+El bucket será privado. No colocar service_role en React.
+
+INSTALAR DESDE POWERSHELL DE WINDOWS
+1. Descargar actualizacion_altas_bajas_acta_word_v4.zip a Descargas.
+2. En Visual Studio Code: Ctrl+C para detener el servidor Vite.
+3. Ejecutar:
+   cd "C:\Users\Lenovo LOQ\plataforma_web_gestion_ganadera_armada"
+   git status
+   git switch -c mejora/acta-defuncion-word
+   Expand-Archive -LiteralPath "$env:USERPROFILE\Downloads\actualizacion_altas_bajas_acta_word_v4.zip" -DestinationPath (Get-Location).Path -Force
+4. Revisar en Supabase SQL Editor el script 05, realizar respaldo y ejecutarlo.
+5. Ejecutar la consulta 06 para verificar que el bucket bajas-fotos es privado.
+6. Ejecutar npm.cmd run dev y refrescar el navegador.
+7. Usar una cuenta RESPONSABLE de unidad; Registrar baja de un animal SOLO en entorno de pruebas o con un evento real documentado (no insertar bajas ficticias en producción).
+8. Cargar 1 foto de evidencia y guardar. En Bajas registradas -> Preparar documento, confirmar la vista previa y descargar el DOCX.
+9. Abrir DOCX en Microsoft Word, revisar contenido y fotografía, añadir firmas/sellos legítimos únicamente por el personal autorizado.
+
+DATOS A COMPLETAR PARA EL ACTA
+- Grado y nombre del vaquero (editable).
+- Grado y nombre del jefe (editable).
+- N.º de acta (editable; año se obtiene de la fecha de emisión).
+- N.º de informe (editable; se propone el del registro).
+- Fecha de emisión del acta (editable; diferente de la fecha del fallecimiento).
+- Descripción y lugar/causa breves para conservar el formato de una página (se mantienen los datos completos en Supabase).
+
+SEGURIDAD
+- La imagen de evidencia es privada y se vincula al ID de la baja, no al ID de fotografías del registro inicial.
+- El cliente no puede editar ni borrar desde Storage la foto una vez subida.
+- Roles SUP_DEPTO_VII y JEFE_DIV_B solo consultan; RESP_UNIDAD registra únicamente bajas de su unidad.
+- La herramienta no inventa nombres, firmas, sellos, informes ni fotografía.
+- Cuando la baja no tiene foto accesible, el Word deja un espacio con aviso de fotografía no adjuntada.
+
+PRUEBAS REALIZADAS EN ENTORNO DE PREPARACIÓN
+- Sintaxis de los componentes JSX revisada con parser TypeScript.
+- Compilación de utilidades JS verificada con node --check.
+- Descompresión y recompresión DOCX probada; Word abierto correctamente con python-docx y LibreOffice.
+- Actas de prueba para Río Blanco, Tamarinero y Mamoré generadas y renderizadas en una sola página cada una.
+- La integración remota con Supabase NO se ha ejecutado aquí; verificar en la cuenta de prueba después del SQL.
+- No se ejecutó npm run build porque esta copia temporal no tiene instaladas las dependencias de Vite; en el equipo del usuario, con npm ci, se podrá validar.

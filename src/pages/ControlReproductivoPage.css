@@ -72,3 +72,11 @@
 .cr-animal .cr-preparar-borrador { border: 1px solid #1769bd; color: #fff; white-space: nowrap; }
 @media (max-width: 800px) { .cr-animal-acciones { width: 100%; justify-content: stretch; } .cr-animal-acciones button { flex: 1; } }
 @media (max-width: 480px) { .cr-animal-acciones { flex-direction: column; } .cr-animal-acciones button { width: 100%; } }
+
+/* Control Reproductivo 2.0: panel de estadísticas por animal */
+.cr-animal { align-items: flex-start; }
+.cr-animal > div:first-child { flex: 1 1 300px; width: 100%; }
+.cr-animal .rr-contenedor { width: 100%; }
+.cr-animal .cr-animal-acciones { flex: 0 1 210px; }
+@media (max-width: 1100px) { .cr-animales { grid-template-columns: 1fr; } }
+@media (max-width: 610px) { .cr-animal { flex-direction: column; } .cr-animal .cr-animal-acciones { flex: 0 1 auto; width: 100%; } }

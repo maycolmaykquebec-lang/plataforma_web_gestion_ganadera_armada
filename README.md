@@ -1,3 +1,27 @@
+## Actualización 03: Control Reproductivo 2.0 (20/11/2026)
+
+**Esta entrega combina la actualización 02 de Nuevo Registro (código del activo y fotografías) con Control Reproductivo 2.0.** No ejecutar de nuevo las migraciones iniciales. La actualización 02 ya está instalada en el Supabase del usuario.
+
+- Hembras: contador por acontecimientos `parto`, suma de crías y fecha del último parto.
+- Machos: contador por `reproductor_id` (montas documentadas donde se seleccionó al macho), última monta y vista de montas consultables desde el expediente.
+- Acontecimiento `monta`: se registra desde la ficha de la hembra, eligiendo un macho activo de **la misma especie y unidad**. No se permite crear nuevas montas sin seleccionar macho; la base comprueba ambos vínculos.
+- Los antecedentes anteriores al sistema se **declaran separadamente**, con fecha y fuente, una sola declaración por animal. Nunca se inventan registros pasados. Registros antiguos de monta que solo tenían `reproductor_codigo` **no se vinculan automáticamente** para evitar atribuciones falsas.
+- Solo el rol `RESP_UNIDAD` de la unidad correspondiente registra montas/antecedentes; los otros dos roles consultan, según las reglas existentes.
+
+**Secuencia segura:** hacer respaldo y ensayar en una copia de prueba → instalar archivos del ZIP en el proyecto local → abrir en Supabase SQL Editor **solo** `supabase/actualizaciones/03_control_reproductivo_contadores.sql` → revisar mensaje `Success` → iniciar `npm.cmd run dev` y probar una monta con hembra y macho de la misma unidad y especie. El ZIP **no aplica SQL por sí solo**. El archivo `.env.local` no se reemplaza.
+
+**Consulta posterior para comprobar la migración (solo lectura):**
+```sql
+select
+  exists(select 1 from information_schema.columns where table_schema='public' and table_name='controles_reproductivos' and column_name='reproductor_id') as relacion_macho,
+  to_regclass('public.rb_antecedentes_reproductivos') is not null as antecedentes,
+  to_regprocedure('public.rb_resumen_reproductivo(bigint)') is not null as rpc_resumen;
+```
+
+**Precaución:** la vista del expediente lista únicamente montas visibles según RLS; el contador RPC autorizado también considera montas históricas de hembras trasladadas, sin revelar sus detalles. El campo `codigo_activo` puede ser `NULL` para animales anteriores a la actualización 02; esta actualización NO cambia sus códigos. Ante un resultado `0`, significa **cero acontecimientos documentados**, no que el animal nunca se reprodujo.
+
+---
+
 # Plataforma para el registro y control de semovientes — Río Blanco
 
 Unidad Operativa de Servicios y Producción Ganadera «RÍO BLANCO», Armada Boliviana.

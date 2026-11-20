@@ -1,0 +1,66 @@
+ACTUALIZACIÓN 03 - CONTROL REPRODUCTIVO 2.0
+=========================================
+
+CONDICIÓN: La actualización 02 de Nuevo Registro ya está instalada en Supabase,
+y se verificó que las fotos/código del activo funcionan. NO aplicar otra vez
+los scripts 01 y 02 ni las migraciones iniciales.
+
+PASO 1: RESPALDAR EL PROYECTO Y CREAR UNA RAMA
+---------------------------------------------
+1) Detener Vite con Ctrl+C.
+2) Ejecutar desde PowerShell:
+   cd "C:\Users\Lenovo LOQ\plataforma_web_gestion_ganadera_armada"
+   git status
+   git switch -c mejora/control-reproductivo-v2
+3) Si Git indica cambios sin guardar, guardarlos o realizar un respaldo antes
+   de extraer la actualización. No se deben perder las mejoras anteriores.
+
+PASO 2: EXTRAER ESTE ZIP SOBRE EL PROYECTO
+-----------------------------------------
+1) Descargar el ZIP en la carpeta Descargas.
+2) Ejecutar en PowerShell, dentro de la raíz del repositorio:
+   Expand-Archive -LiteralPath "$env:USERPROFILE\Downloads\actualizacion_control_reproductivo_v3.zip" -DestinationPath (Get-Location).Path -Force
+3) Confirmar los archivos que fueron modificados:
+   git status
+
+PASO 3: APLICAR SOLO LA MIGRACIÓN NUEVA EN SUPABASE
+---------------------------------------------------
+Hacer antes un RESPALDO de la base de datos y probar preferentemente en
+una copia de pruebas.
+
+En PowerShell, copiar el SQL:
+   Get-Content ".\supabase\actualizaciones\03_control_reproductivo_contadores.sql" -Raw | Set-Clipboard
+
+En Supabase -> SQL Editor -> New query, pegar y ejecutar solo ese script.
+NO ejecutar 01_modulos_pendientes.sql, 02_nuevo_registro...sql,
+ni las migraciones de creación inicial.
+
+PASO 4: VERIFICAR LA MIGRACIÓN
+-----------------------------
+Abrir y ejecutar supabase/actualizaciones/04_verificar_control_reproductivo.sql.
+Debería devolver cuatro 'true' en la primera consulta. Después muestra
+recuentos de partos y montas documentadas sin crear datos ficticios.
+
+PASO 5: REINICIAR VITE Y PROBAR
+-------------------------------
+   npm.cmd run dev
+
+1) Iniciar sesión como RESPONSABLE DE UNIDAD (RESP_UNIDAD).
+2) Ir a Control Reproductivo y buscar una HEMBRA por código individual.
+3) Ver: Partos registrados / Antecedentes / Último parto.
+4) Registrar un evento 'monta' en la ficha de la HEMBRA,
+   seleccionando un MACHO activo de esa unidad y de la misma especie.
+5) Buscar el código individual del MACHO y confirmar que ahora tiene 1 monta
+   más en el resumen (o confirmar con la consulta SQL de verificación).
+6) Si se registra un parto, aumenta partos de la HEMBRA una sola vez,
+   independientemente de la cantidad de crías.
+
+IMPORTANTE
+---------
+- Cero partos documentados no significa necesariamente que la hembra nunca parió.
+- Los antecedentes se registran por separado, una sola vez con fuente.
+- Los registros viejos que solo tienen reproductor_codigo no se enlazan
+  automáticamente a un macho (evita atribuciones equivocadas).
+- La aplicación NO ha ejecutado este SQL en tu base remota. Se requiere
+  su instalación manual y una prueba real de la conexión.
+- No sobrescribir .env.local; el ZIP no lo incluye.

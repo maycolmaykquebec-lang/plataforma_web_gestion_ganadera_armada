@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../services/supabaseClient'
 import { usePerfil } from '../contexts/PerfilContext'
 import { puedeRegistrar } from '../auth/permisos'
@@ -22,13 +22,115 @@ function hoyBolivia() {
 
 function fechaVisible(fecha) {
   if (!fecha) return '—'
-  const [anio, mes, dia] = fecha.split('-')
+  const [anio, mes, dia] = fecha.slice(0, 10).split('-')
   return `${dia}/${mes}/${anio}`
+}
+
+function fechaHoraVisible(fecha) {
+  if (!fecha) return '—'
+  return new Intl.DateTimeFormat('es-BO', {
+    timeZone: 'America/La_Paz', day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  }).format(new Date(fecha))
+}
+
+function errorCancelacion(e) {
+  // Solo se muestran errores de negocio conocidos, no detalles internos de la base.
+  const detalle = e?.message || ''
+  if (e?.code === '42501') return 'No tiene permiso para cancelar esta solicitud. Solo el Supervisor Departamento VII puede hacerlo.'
+  if (/Solo se puede cancelar un traslado aprobado/i.test(detalle)) return 'La solicitud ya no está aprobada o el traslado ya fue ejecutado. Actualice el listado.'
+  if (/semoviente ya no est[aá] activo/i.test(detalle)) return 'No es posible cancelar: el semoviente ya no está activo en la unidad de origen.'
+  if (/fundamento de cancelaci[oó]n/i.test(detalle)) return 'La justificación debe contener entre 15 y 1000 caracteres.'
+  if (/referencia documental/i.test(detalle)) return 'La referencia documental no debe superar 200 caracteres.'
+  if (e?.code === 'PGRST202' || e?.code === '42883') return 'Todavía no está instalada la migración V4.2 en Supabase.'
+  return 'No se pudo cancelar el traslado. Revise su estado, los permisos y la conexión.'
+}
+
+function CancelarTrasladoModal({ solicitud, nombreUnidad, onCerrar, onCancelado }) {
+  const dialogo = useRef(null)
+  const [motivo, setMotivo] = useState('')
+  const [referencia, setReferencia] = useState('')
+  const [confirmado, setConfirmado] = useState(false)
+  const [guardando, setGuardando] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const elemento = dialogo.current
+    elemento?.showModal()
+    return () => { if (elemento?.open) elemento.close() }
+  }, [])
+
+  async function confirmar(e) {
+    e.preventDefault()
+    if (guardando) return
+    if (!confirmado) { setError('Confirme que el traslado no fue ejecutado.'); return }
+    if (motivo.trim().length < 15 || motivo.trim().length > 1000) {
+      setError('Escriba un fundamento de cancelación de 15 a 1000 caracteres.'); return
+    }
+    setGuardando(true)
+    setError('')
+    try {
+      const resultado = await supabase.rpc('rb_cancelar_traslado_aprobado', {
+        p_solicitud_id: solicitud.id,
+        p_motivo: motivo.trim(),
+        p_referencia_documental: referencia.trim() || null,
+      })
+      if (resultado.error) throw resultado.error
+      onCancelado(solicitud.id)
+    } catch (e) {
+      setError(errorCancelacion(e))
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  return <dialog ref={dialogo} className="mov-cancel-dialog" aria-labelledby="mov-cancel-titulo"
+    onCancel={e => { if (guardando) e.preventDefault(); else onCerrar() }}>
+    <div className="mov-cancel-header">
+      <div><small>SUPERVISOR DEPARTAMENTO VII</small><h2 id="mov-cancel-titulo">Cancelar traslado aprobado</h2></div>
+      <button type="button" className="mov-secundario" disabled={guardando} onClick={onCerrar} aria-label="Cerrar">×</button>
+    </div>
+    <p>Esta operación <strong>no da de baja al semoviente</strong>. Solo cancela la autorización de un traslado que no llegó a ejecutarse.</p>
+    <dl className="mov-cancel-resumen">
+      <div><dt>Solicitud</dt><dd>N.º {solicitud.id}</dd></div>
+      <div><dt>Semoviente</dt><dd>{solicitud.semoviente?.codigo || `ID ${solicitud.semoviente_id}`}</dd></div>
+      <div><dt>Origen</dt><dd>{nombreUnidad(solicitud.unidad_origen_id)}</dd></div>
+      <div><dt>Destino</dt><dd>{nombreUnidad(solicitud.unidad_destino_id)}</dd></div>
+      <div><dt>Estado</dt><dd>Aprobado, no ejecutado</dd></div>
+      <div><dt>Autorización original</dt><dd>{fechaHoraVisible(solicitud.fecha_autorizacion)}</dd></div>
+    </dl>
+    <form onSubmit={confirmar} className="mov-cancel-form">
+      <label htmlFor="mov-fundamento">Justificación de la cancelación <span aria-hidden="true">*</span>
+        <textarea id="mov-fundamento" required minLength={15} maxLength={1000} rows={4}
+          placeholder="Describa el motivo real de la cancelación y las circunstancias documentadas."
+          disabled={guardando} value={motivo} onChange={e => setMotivo(e.target.value)} />
+        <small>{motivo.trim().length}/1000 caracteres (mínimo 15)</small>
+      </label>
+      <label htmlFor="mov-referencia">Referencia documental (opcional)
+        <input id="mov-referencia" maxLength={200} disabled={guardando} value={referencia}
+          onChange={e => setReferencia(e.target.value)} placeholder="N.º de informe, nota o acta" />
+      </label>
+      <label className="mov-cancel-check">
+        <input type="checkbox" checked={confirmado} disabled={guardando}
+          onChange={e => setConfirmado(e.target.checked)} />
+        <span>Confirmo que el traslado no fue ejecutado y que la justificación corresponde a hechos documentados.</span>
+      </label>
+      <p className="mov-cancel-nota">La solicitud quedará con estado <strong>Cancelado</strong>. Se conservarán el autorizador y la fecha de aprobación originales, y se registrará la cancelación en auditoría.</p>
+      {error && <p className="mov-error" role="alert">{error}</p>}
+      <div className="mov-cancel-actions">
+        <button type="button" className="mov-secundario" disabled={guardando} onClick={onCerrar}>Volver</button>
+        <button type="submit" className="mov-peligro" disabled={guardando || !confirmado || motivo.trim().length < 15}>
+          {guardando ? 'Registrando cancelación…' : 'Confirmar cancelación'}
+        </button>
+      </div>
+    </form>
+  </dialog>
 }
 
 export default function MovimientosPage() {
   const perfil = usePerfil()
   const responsable = puedeRegistrar(perfil)
+  const supervisor = perfil?.rol?.codigo === 'SUP_DEPTO_VII'
   const [unidades, setUnidades] = useState([])
   const [filas, setFilas] = useState([])
   const [codigo, setCodigo] = useState('')
@@ -40,6 +142,7 @@ export default function MovimientosPage() {
   const [ocupado, setOcupado] = useState(false)
   const [cargando, setCargando] = useState(true)
   const [recarga, setRecarga] = useState(0)
+  const [solicitudCancelar, setSolicitudCancelar] = useState(null)
 
   useEffect(() => {
     let vigente = true
@@ -52,16 +155,19 @@ export default function MovimientosPage() {
             id, semoviente_id, unidad_origen_id, unidad_destino_id,
             fecha_prevista, motivo, estado, creado_en,
             fecha_autorizacion, fecha_ejecucion,
+            cancelado_por, cancelado_en, motivo_cancelacion, referencia_cancelacion,
             semoviente:semovientes(codigo)
           `).order('creado_en', { ascending: false }).limit(100),
         ])
         if (u.error || m.error) throw u.error || m.error
         if (vigente) { setUnidades(u.data || []); setFilas(m.data || []) }
-      } catch {
+      } catch (e) {
         if (vigente) {
           setFilas([])
           setUnidades([])
-          setError('No se pudieron cargar las solicitudes. Verifique la conexión y la adaptación de la base existente.')
+          setError(e?.code === '42703' || e?.code === 'PGRST204'
+            ? 'Falta instalar la actualización SQL V4.2 en Supabase. Instale primero 07_cancelar_traslado_aprobado.sql.'
+            : 'No se pudieron cargar las solicitudes. Verifique la conexión y la adaptación de la base existente.')
         }
       } finally { if (vigente) setCargando(false) }
     }
@@ -158,17 +264,41 @@ export default function MovimientosPage() {
             <td>{nombreUnidad(m.unidad_destino_id)}</td>
             <td>{fechaVisible(m.fecha_prevista)}</td>
             <td>{m.motivo}</td>
-            <td><span className="mov-estado">{ESTADOS[m.estado] || m.estado}</span></td>
-            <td>{perfil.rol.codigo === 'SUP_DEPTO_VII' && m.estado === 'pendiente'
-              ? <button disabled={ocupado} onClick={() => transicion('autorizar_movimiento', m.id)}>Autorizar</button>
-              : responsable && String(m.unidad_destino_id) === String(perfil.unidad.id) && m.estado === 'aprobado'
-                ? <button disabled={ocupado} onClick={() => transicion('confirmar_recepcion', m.id)}>Confirmar recepción</button>
-                : '—'}
+            <td>
+              <span className={`mov-estado ${m.estado === 'cancelado' ? 'mov-estado--cancelado' : ''}`}>{ESTADOS[m.estado] || m.estado}</span>
+              {m.estado === 'cancelado' && m.motivo_cancelacion && <div className="mov-cancel-detalle">
+                <strong>Cancelación:</strong> {m.motivo_cancelacion}
+                {m.referencia_cancelacion && <div><strong>Referencia:</strong> {m.referencia_cancelacion}</div>}
+                {m.cancelado_en && <div><strong>Fecha:</strong> {fechaHoraVisible(m.cancelado_en)}</div>}
+              </div>}
             </td>
+            <td><div className="mov-botones">
+              {supervisor && m.estado === 'pendiente' &&
+                <button disabled={ocupado} onClick={() => transicion('autorizar_movimiento', m.id)}>Autorizar</button>}
+              {supervisor && m.estado === 'aprobado' && !m.fecha_ejecucion &&
+                <button type="button" className="mov-peligro" disabled={ocupado}
+                  onClick={() => { setMensaje(''); setError(''); setSolicitudCancelar(m) }}>
+                  Cancelar traslado
+                </button>}
+              {responsable && String(m.unidad_destino_id) === String(perfil.unidad.id) && m.estado === 'aprobado' &&
+                <button disabled={ocupado} onClick={() => transicion('confirmar_recepcion', m.id)}>Confirmar recepción</button>}
+              {!((supervisor && (m.estado === 'pendiente' || (m.estado === 'aprobado' && !m.fecha_ejecucion))) ||
+                (responsable && String(m.unidad_destino_id) === String(perfil.unidad.id) && m.estado === 'aprobado')) && '—'}
+            </div></td>
           </tr>)}
           {!filas.length && <tr><td colSpan={8}>{cargando ? 'Cargando solicitudes…' : 'No hay solicitudes disponibles.'}</td></tr>}
         </tbody>
       </table></div>
     </section>
+    {solicitudCancelar && <CancelarTrasladoModal
+      solicitud={solicitudCancelar}
+      nombreUnidad={nombreUnidad}
+      onCerrar={() => setSolicitudCancelar(null)}
+      onCancelado={id => {
+        setSolicitudCancelar(null)
+        setError('')
+        setMensaje(`Traslado N.º ${id} cancelado correctamente. La justificación quedó registrada. El semoviente permanece en su unidad de origen.`)
+        setRecarga(n => n + 1)
+      }} />}
   </div>
 }

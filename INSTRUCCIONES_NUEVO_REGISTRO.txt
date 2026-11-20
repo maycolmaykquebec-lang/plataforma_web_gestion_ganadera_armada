@@ -1,0 +1,83 @@
+ACTUALIZACIÓN DE NUEVO REGISTRO · GESTIÓN GANADERA ARMADA BOLIVIANA
+==================================================================
+Versión del parche: 19-11-2026
+
+CAMBIOS
+-------
+1) Junto a "Código individual" aparece "Código del Activo".
+   Se propone automáticamente y se puede ajustar, respetando el prefijo de la unidad:
+     Río Blanco:   007 -> UOSPGRB-86-WI-007
+     Tamarinero:   002 -> UOSPGT-86-WI-002
+     Mamoré:       001 -> UOSPGM-86-WI-001
+   Supabase comprueba la unicidad por (unidad_id, codigo_activo),
+   además de la unicidad existente por (unidad_id, codigo).
+2) Se agrega "4. Fotografías del semoviente" con tres espacios de carga
+   independientes: frontal, lateral izquierdo y lateral derecho.
+   Imágenes JPG, PNG, WebP; máximo 5 MB por archivo; opcionales.
+3) Listado: columna del nuevo código y búsqueda por ese dato.
+4) Ficha individual: código del activo y galería de hasta tres fotos.
+5) Las fotos se almacenan en un bucket PRIVADO de Supabase Storage,
+   con permisos limitados por unidad y por rol. No se guardan como base64.
+
+ANTES DE INSTALAR
+----------------
+- La base de datos remota debe tener ya aplicada la adaptación
+  de los 3 roles (SUP_DEPTO_VII, JEFE_DIV_B, RESP_UNIDAD).
+- Haz un respaldo de tu proyecto y, preferiblemente, de la base de datos.
+- El SQL adjunto no se aplica automáticamente. No ejecutes migraciones antiguas
+  de instalación nueva sobre tu base existente.
+- No incluyas claves privadas de Supabase en el frontend.
+
+INSTALAR EL PARCHE DESDE POWERSHELL
+----------------------------------
+1. Guarda el archivo actualizacion_nuevo_registro_ganadera.zip
+   en la carpeta Descargas de Windows.
+2. Abre PowerShell y detén el servidor Vite con Ctrl+C.
+3. Ejecuta estos comandos (el ZIP incluye rutas desde la raíz):
+
+   $proyecto = 'C:\Users\Lenovo LOQ\plataforma_web_gestion_ganadera_armada'
+   Set-Location $proyecto
+   git status
+   git switch -c mejora/nuevo-registro-fotos
+   Expand-Archive -LiteralPath "$env:USERPROFILE\Downloads\actualizacion_nuevo_registro_ganadera.zip" -DestinationPath $proyecto -Force
+
+   Nota: si ya tienes cambios locales o esa rama existe, evita sobrescribir
+   sin antes respaldarlos; el ZIP no modifica .env.local ni node_modules.
+   Puedes omitir git switch si ya trabajas en una rama propia.
+
+4. SUPABASE (UN PASO NECESARIO PARA GUARDAR):
+   En tu panel de Supabase abre SQL Editor. Revisa y ejecuta SOLO
+   supabase/actualizaciones/02_nuevo_registro_codigo_activo_fotografias.sql
+   Hazlo primero en copia de prueba; modifica tabla semovientes agregando
+   codigo_activo, crea tabla semoviente_fotografias y bucket privado.
+   Los registros antiguos conservan codigo_activo en NULL.
+   Si recibes el mensaje "antes de esta actualizacion... adaptacion de tres roles",
+   primero verifica con el administrador el estado de esa adaptación.
+
+5. Reinicia la aplicación:
+   npm.cmd ci                 # solo si faltan dependencias
+   npm.cmd run dev
+   Abre la URL que indique Vite (habitualmente http://localhost:5173).
+
+PRUEBA DE HUMO
+--------------
+- Ingresar como RESP_UNIDAD de Río Blanco.
+- Nuevo Registro: escribir código individual 007 y comprobar que
+  Código del Activo se propone como UOSPGRB-86-WI-007.
+- Completar los campos obligatorios, adjuntar imágenes de prueba y guardar.
+- Confirmar en la lista el código y en la ficha las tres vistas.
+- Comprobar que intentar guardar el mismo Código del Activo en la misma
+  unidad causa un error de duplicidad sin crear dos animales.
+- Probar con las otras dos unidades cuando existan perfiles autorizados.
+- Si una foto falla DESPUÉS de guardarse el animal, NO repetir el registro:
+  mantener abierto el modal y pulsar "Reintentar fotografías".
+
+LIMITACIONES INTENCIONALES
+-------------------------
+- No se asignan códigos retroactivamente a animales antiguos.
+- El Código del Activo no se modifica automáticamente al trasladar un animal;
+  esta regla requiere validación institucional posterior.
+- Fotos opcionales; se permite registrar un animal sin fotografías.
+- No se modifican las demás páginas ni se alteran perfiles de usuarios.
+- El SQL incluye solo cambios aditivos y políticas nuevas, pero no se ha
+  ejecutado sobre la base remota del usuario.

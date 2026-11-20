@@ -6,6 +6,8 @@ import { supabase } from '../services/supabaseClient'
 import { usePerfil } from '../contexts/PerfilContext'
 import ExpedienteHistorialModal from '../components/historial/ExpedienteHistorialModal'
 import NuevoControlReproductivoModal from '../components/reproduccion/NuevoControlReproductivoModal'
+import ResumenReproductivo from '../components/reproduccion/ResumenReproductivo'
+import RegistrarAntecedentesModal from '../components/reproduccion/RegistrarAntecedentesModal'
 import './ControlReproductivoPage.css'
 
 const POR_PAGINA = 15
@@ -64,6 +66,7 @@ function ControlReproductivoPage() {
   const [errorAnimales, setErrorAnimales] = useState('')
   const [animalAbierto, setAnimalAbierto] = useState(null)
   const [animalParaBorrador, setAnimalParaBorrador] = useState(null)
+  const [animalParaAntecedentes, setAnimalParaAntecedentes] = useState(null)
   const [recarga, setRecarga] = useState(0)
   const [avisoGuardado, setAvisoGuardado] = useState('')
 
@@ -143,7 +146,7 @@ function ControlReproductivoPage() {
       setBuscando(true)
       setErrorAnimales('')
       let consulta = supabase.from('semovientes')
-        .select('id, codigo, especie, categoria, sexo, estado, unidad_id')
+        .select('id, codigo, codigo_activo, especie, categoria, sexo, estado, unidad_id')
         .eq('codigo', codigoAplicado)
       if (especie) consulta = consulta.eq('especie', especie)
       if (consultaGeneral && unidadId !== 'todas') {
@@ -201,7 +204,7 @@ function ControlReproductivoPage() {
       <section className="cr-portada" aria-label="Presentación del módulo Control Reproductivo">
         <span className="cr-eyebrow">RIO_BLANCO · MÓDULO DE ACONTECIMIENTOS</span>
         <h1>Control reproductivo</h1>
-        <p>Seguimiento de servicios, gestaciones, partos y nacimientos según la especie. Cada acontecimiento se vinculará con el código individual del animal.</p>
+        <p>Seguimiento de servicios, gestaciones, partos y nacimientos. Contadores automáticos de partos y montas vinculadas, con antecedentes históricos diferenciados.</p>
         <small>{consultaGeneral
           ? 'DEPARTAMENTO VII · CONSULTA INSTITUCIONAL'
           : `UNIDAD OPERATIVA ${perfil?.unidad?.nombre || 'ASIGNADA'}`}</small>
@@ -266,7 +269,9 @@ function ControlReproductivoPage() {
                 <div className="cr-animal" key={animal.id}>
                   <div>
                     <strong>{animal.codigo} · {especieTexto(animal.especie)}</strong>
-                    <small>{texto(animal.categoria, 'Sin clase')} · {nombreUnidad(animal.unidad_id)} · {animal.estado}</small>
+                    <small>{animal.codigo_activo ? `Activo: ${animal.codigo_activo} · ` : ''}{texto(animal.categoria, 'Sin clase')} · {nombreUnidad(animal.unidad_id)} · {animal.estado}</small>
+                    <ResumenReproductivo semovienteId={animal.id} sexo={animal.sexo} recarga={recarga}
+                      onRegistrarAntecedentes={puedeRegistrar && animal.estado === 'Activo' ? () => setAnimalParaAntecedentes(animal) : undefined} />
                   </div>
                   <div className="cr-animal-acciones">
                     <button type="button" className="cr-boton-secundario" onClick={() => setAnimalAbierto(animal.id)}>
@@ -356,6 +361,9 @@ function ControlReproductivoPage() {
           setRecarga(n => n + 1)
         }}
       />
+      <RegistrarAntecedentesModal animal={animalParaAntecedentes}
+        onCerrar={() => setAnimalParaAntecedentes(null)}
+        onGuardado={() => { setAnimalParaAntecedentes(null); setAvisoGuardado('Antecedentes reproductivos declarados. Se actualizaron los totales.'); setRecarga(n => n + 1) }} />
       <ExpedienteHistorialModal animalId={animalAbierto} onCerrar={() => setAnimalAbierto(null)} />
     </main>
   )

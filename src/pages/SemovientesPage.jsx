@@ -117,7 +117,7 @@ function SemovientesPage() {
       let consulta = supabase
         .from('semovientes')
         .select(`
-          id, codigo, especie, categoria, raza,
+          id, codigo, codigo_activo, especie, categoria, raza,
           sexo, fecha_nacimiento, procedencia,
           estado, unidad_id, created_at
         `, { count: 'exact' })
@@ -145,6 +145,7 @@ function SemovientesPage() {
       if (termino) {
         consulta = consulta.or(
           `codigo.ilike.%${termino}%,` +
+          `codigo_activo.ilike.%${termino}%,` +
           `raza.ilike.%${termino}%,` +
           `procedencia.ilike.%${termino}%`
         )
@@ -330,7 +331,7 @@ function SemovientesPage() {
           <input
             id="buscar-animal"
             type="search"
-            placeholder="Código, raza o procedencia"
+            placeholder="Código individual, activo, raza o procedencia"
             value={busqueda}
             maxLength={80}
             onChange={e => setBusqueda(e.target.value)}
@@ -398,7 +399,8 @@ function SemovientesPage() {
           <table className="rio_blanco-registro-tabla">
             <thead>
               <tr>
-                <th>Código</th>
+                <th>Código individual</th>
+                <th>Código del Activo</th>
                 {consultaGeneral && <th>Unidad</th>}
                 <th>Clase</th>
                 <th>Raza</th>
@@ -414,7 +416,7 @@ function SemovientesPage() {
               {!cargando && !error && registros.length === 0 && (
                 <tr>
                   <td
-                    colSpan={consultaGeneral ? 9 : 8}
+                    colSpan={consultaGeneral ? 10 : 9}
                     className="rio_blanco-sin-registros"
                   >
                     No existen animales que coincidan con los filtros.
@@ -425,6 +427,7 @@ function SemovientesPage() {
               {!cargando && !error && registros.map(animal => (
                 <tr key={animal.id}>
                   <td><strong>{animal.codigo}</strong></td>
+                  <td>{animal.codigo_activo || '—'}</td>
 
                   {consultaGeneral && (
                     <td>{nombreUnidad(animal.unidad_id)}</td>
@@ -510,7 +513,7 @@ function SemovientesPage() {
         <NuevoSemovienteModal
           abierto={modalAbierto}
           especie={especieId}
-          unidad={perfil?.unidad?.nombre || 'No asignada'}
+          unidad={perfil?.unidad}
           onCerrar={() => setModalAbierto(false)}
           onGuardado={() => {
             setModalAbierto(false)

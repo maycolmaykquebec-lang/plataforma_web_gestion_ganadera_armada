@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../services/supabaseClient'
 import './ExpedienteHistorialModal.css'
+import ResumenReproductivo from '../reproduccion/ResumenReproductivo'
 import './ExpedienteEventos.css'
 
 const NOMBRES = {
@@ -60,6 +61,8 @@ function ExpedienteHistorialModal({ animalId, onCerrar }) {
   const [limiteEventos, setLimiteEventos] = useState(EVENTOS_POR_PAGINA)
   const [cargandoEventos, setCargandoEventos] = useState(false)
   const [errorEventos, setErrorEventos] = useState('')
+  const [montasMacho, setMontasMacho] = useState([])
+  const [errorMontas, setErrorMontas] = useState('')
 
   useEffect(() => {
     if (animalId == null) {
@@ -78,11 +81,13 @@ function ExpedienteHistorialModal({ animalId, onCerrar }) {
       setTotalEventos(0)
       setLimiteEventos(EVENTOS_POR_PAGINA)
       setErrorEventos('')
+      setMontasMacho([])
+      setErrorMontas('')
 
       const { data, error: errorAnimal } = await supabase
         .from('semovientes')
         .select(`
-          id, codigo, especie, categoria, raza, sexo,
+          id, codigo, codigo_activo, especie, categoria, raza, sexo,
           fecha_nacimiento, fecha_ingreso, procedencia,
           marca_ancla, vacuna_brucelosis, estado,
           observaciones, unidad_id, created_at, updated_at
@@ -154,6 +159,22 @@ function ExpedienteHistorialModal({ animalId, onCerrar }) {
   }, [animal?.id, limiteEventos])
 
   useEffect(() => {
+    if (animal?.id == null || animal.sexo !== 'Macho') return
+    let activo = true
+    async function cargarMontas() {
+      const { data, error: fallo } = await supabase.from('controles_reproductivos')
+        .select('id,fecha_evento,semoviente_id,resultado,metodo')
+        .eq('reproductor_id', animal.id).eq('tipo_evento', 'monta')
+        .order('fecha_evento', { ascending: false }).limit(30)
+      if (!activo) return
+      if (fallo) setErrorMontas('No fue posible cargar las montas visibles del macho.')
+      else setMontasMacho(data || [])
+    }
+    cargarMontas()
+    return () => { activo = false }
+  }, [animal?.id, animal?.sexo])
+
+  useEffect(() => {
     if (animalId == null) return
     function teclado(evento) {
       if (evento.key === 'Escape') onCerrar()
@@ -205,6 +226,7 @@ function ExpedienteHistorialModal({ animalId, onCerrar }) {
               <h3>Datos de identificación</h3>
               <div className="eh-grid">
                 <Campo titulo="Código" valor={animal.codigo} />
+                <Campo titulo="Código del Activo" valor={animal.codigo_activo || 'No asignado'} />
                 <Campo titulo="Especie" valor={NOMBRES[animal.especie] || animal.especie} />
                 <Campo titulo="Clase" valor={animal.categoria} />
                 <Campo titulo="Sexo" valor={animal.sexo} />
@@ -221,6 +243,19 @@ function ExpedienteHistorialModal({ animalId, onCerrar }) {
                 <p>{animal.observaciones || 'Sin observaciones registradas.'}</p>
               </div>
 
+              <h3>Resumen reproductivo</h3>
+              <ResumenReproductivo semovienteId={animal.id} sexo={animal.sexo} />
+              {animal.sexo === 'Macho' && (
+                <div>
+                  <h3>Últimas montas vinculadas visibles</h3>
+                  <p className="eh-eventos-subtitulo">Los detalles se muestran solo cuando las políticas RLS permiten consultar el registro de la hembra. El total puede incluir montas de hembras trasladadas.</p>
+                  {errorMontas && <p className="eh-error" role="alert">{errorMontas}</p>}
+                  {!errorMontas && montasMacho.length === 0 && <p className="eh-eventos-vacio">Sin montas vinculadas consultables en el historial.</p>}
+                  {montasMacho.length > 0 && <ol className="eh-linea-tiempo">
+                    {montasMacho.map(m => <li key={m.id}><span>{fecha(m.fecha_evento)}</span><strong>Monta registrada · Hembra ID {m.semoviente_id}</strong><p>{m.resultado || 'Sin resultado'}{m.metodo ? ` · ${m.metodo}` : ''}</p></li>)}
+                  </ol>}
+                </div>
+              )}
               <h3>Acontecimientos de gestión documentados</h3>
               <p className="eh-eventos-subtitulo">
                 Información procedente de la tabla semoviente_eventos y filtrada por los permisos de la sesión.

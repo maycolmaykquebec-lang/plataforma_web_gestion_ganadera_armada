@@ -1,0 +1,58 @@
+ACTUALIZACIÓN V4.1 — ALTAS Y BAJAS: FOTOGRAFÍA + FIRMANTES EN ACTA WORD
+Plataforma Web de Gestión Ganadera — Armada Boliviana
+
+PRERREQUISITO
+Haber instalado antes la V4 (Altas y Bajas, acta Word), incluida su plantilla:
+  public/plantillas/acta_defuncion_institucional.docx
+La migración 05_fotografias_de_bajas.sql debe haber sido ejecutada correctamente.
+
+QUÉ CORRIGE V4.1
+1. Si se recuperó la foto privada de la baja, convierte la imagen a JPEG y
+   sustituye el elemento visual de la plantilla Word (word/media/image2.jpeg).
+2. No permite descargar un documento con la foto genérica «FOTOGRAFÍA NO ADJUNTADA»
+   cuando no existe una fotografía real accesible para esa baja.
+3. Muestra para qué BAJA, UNIDAD y ANIMAL se consulta la fotografía en Supabase.
+   Botón «Volver a consultar fotografía» si la descarga falla.
+4. Pide por separado grado y nombre completo del VAQUERO y del JEFE.
+   Esos cuatro valores forman los dos nombres y se repiten tal cual en el cuerpo
+   del acta y bajo los espacios de firma.
+5. Conserva los cargos VAQUERO DE LA U.O.S.P.G. y JEFE DE LA U.O.S.P.G.
+   Cambia automáticamente el nombre de la unidad: RIO BLANCO, TAMARINERO o MAMORE.
+6. Verifica la existencia de los campos en la plantilla antes de descargar.
+7. No cambia los datos existentes de Supabase ni altera la plantilla Word.
+
+INSTALACIÓN EN POWERSHELL (Windows)
+1. Descargar actualizacion_altas_bajas_acta_word_v4_1.zip en Descargas.
+2. En la terminal donde corre Vite, detener con Ctrl+C.
+3. Ejecutar:
+   cd "C:\Users\Lenovo LOQ\plataforma_web_gestion_ganadera_armada"
+   git status
+   git switch -c mejora/correccion-acta-v41
+   Expand-Archive -LiteralPath "$env:USERPROFILE\Downloads\actualizacion_altas_bajas_acta_word_v4_1.zip" -DestinationPath (Get-Location).Path -Force
+   npm.cmd run dev
+4. Abrir la aplicación y recargar con Ctrl+Shift+R.
+5. Altas y Bajas -> elegir una baja de defunción -> Preparar documento.
+6. Verificar foto real visible y la identificación «Baja N.º... / Unidad... / Animal...».
+7. Introducir grado y nombre del vaquero y grado y nombre del jefe.
+   La vista previa bajo esos campos debe coincidir con los valores ingresados.
+8. Descargar acta .docx y verificar que fotografía y firmantes se vean en Word.
+
+ATENCIÓN A BAJAS ANTIGUAS
+La foto se vincula a la baja específica y se almacena en:
+  bajas-fotos/{unidad_id}/{baja_id}/evidencia.jpg
+Si una baja vieja no tiene foto en ese archivo, no se puede recuperar
+«la misma foto»: el documento ya no se descargará con un recuadro vacío.
+No registre por segunda vez la misma baja para resolverlo.
+
+BASE DE DATOS
+V4.1 NO INCLUYE SQL. NO vuelva a ejecutar las migraciones 01-06.
+No instala bibliotecas nuevas ni altera otros módulos.
+
+PRUEBAS DE PREPARACIÓN
+- Sintaxis JS y JSX revisada.
+- Cálculo de firmantes para 3 unidades validado.
+- Generación OOXML comprobada con fotografía JPEG de prueba y grados/nombres
+  sustituidos 2 veces cada uno (cuerpo y firmas).
+- DOCX de prueba renderizado a una página para cada unidad. La imagen se vio.
+- Queda por validar en el navegador de tu equipo con una foto PRIVADA real
+  descargada desde TU Supabase; no contamos con acceso a esa sesión.

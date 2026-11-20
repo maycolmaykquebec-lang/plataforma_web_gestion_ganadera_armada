@@ -1,1 +1,26 @@
 .movimientos-page{display:grid;gap:22px;color:#163453}.movimientos-page>header{padding:28px;border-radius:18px;background:#0c2b49;color:white}.movimientos-page h1{margin:12px 0}.movimientos-page h2{margin:0 0 12px;font-size:20px}.movimientos-page p{line-height:1.65}.movimientos-page section{background:white;padding:24px;border:1px solid #dce4ed;border-radius:16px}.movimientos-page form{display:grid;grid-template-columns:1fr 1fr;gap:16px}.movimientos-page label{display:grid;gap:8px;font-weight:600}.movimientos-page input,.movimientos-page select,.movimientos-page textarea{width:100%;box-sizing:border-box;padding:12px;border:1px solid #b7c8d8;border-radius:8px;font:inherit}.mov-motivo{grid-column:1/-1}.movimientos-page button{padding:11px 18px;background:#123e64;color:white;border:0;border-radius:8px;font:inherit;cursor:pointer}.movimientos-page button:disabled{opacity:.5;cursor:wait}.mov-scroll{overflow:auto}.movimientos-page table{width:100%;border-collapse:collapse;text-align:left;font-size:14px}.movimientos-page th,.movimientos-page td{padding:14px;border-bottom:1px solid #e3eaf1}.movimientos-page th{background:#f1f5f9}.mov-estado{background:#edf3f9;padding:6px 9px;border-radius:7px;white-space:nowrap}.mov-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}.mov-error{padding:16px;background:#fff0ed;color:#9b2626;border-radius:8px}.mov-exito{padding:16px;background:#e7f6ed;color:#165a38;border-radius:8px}@media(max-width:640px){.movimientos-page form{grid-template-columns:1fr}.movimientos-page section{padding:16px}}
+/* V4.2 - Cancelación documentada de traslados aprobados */
+.mov-botones{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.movimientos-page button.mov-peligro{background:#ab3030;color:#fff}
+.movimientos-page button.mov-peligro:hover:not(:disabled){background:#8c2424}
+.movimientos-page button.mov-secundario{background:#fff;color:#173a5a;border:1px solid #b7c8d8}
+.mov-cancel-detalle{margin-top:10px;min-width:210px;max-width:340px;font-size:12px;line-height:1.55;overflow-wrap:anywhere;color:#4a5360}
+.mov-estado--cancelado{background:#fce8e7;color:#8b2828}
+.mov-cancel-dialog{position:fixed;inset:0;margin:auto;width:min(680px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:24px;box-sizing:border-box;border:1px solid #d2dde8;border-radius:15px;background:#fff;color:#163453;box-shadow:0 22px 70px #061b3760}
+.mov-cancel-dialog::backdrop{background:#061b37ad}
+.mov-cancel-dialog h2{font-size:22px;margin:4px 0 0}
+.mov-cancel-header{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.mov-cancel-header small{font-weight:700;color:#4b6580}
+.mov-cancel-dialog>p{line-height:1.6}
+.mov-cancel-resumen{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px;margin:14px 0;background:#f2f6fb;border-radius:10px}
+.mov-cancel-resumen div{min-width:0}
+.mov-cancel-resumen dt{font-size:12px;color:#66768a;margin-bottom:4px}
+.mov-cancel-resumen dd{margin:0;font-weight:700;overflow-wrap:anywhere}
+.movimientos-page .mov-cancel-form{display:grid;grid-template-columns:1fr;gap:13px}
+.mov-cancel-form label{font-weight:650}
+.mov-cancel-form label small{font-weight:400;color:#63768b}
+.mov-cancel-check{display:flex!important;align-items:start;gap:10px;line-height:1.45}
+.mov-cancel-check input{width:18px!important;min-width:18px;margin:2px 0 0}
+.mov-cancel-nota{padding:12px;border:1px solid #d6e2ed;border-radius:8px;background:#f7fafc;font-size:13px;margin:0}
+.mov-cancel-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px}
+@media(max-width:640px){.mov-cancel-dialog{padding:16px}.mov-cancel-resumen{grid-template-columns:1fr}}

@@ -44,6 +44,8 @@ function FichaSemovienteModal({ animalId, onCerrar }) {
   const [unidad, setUnidad] = useState('')
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+  const [fotos, setFotos] = useState([])
+  const [errorFotos, setErrorFotos] = useState('')
 
   useEffect(() => {
     if (!animalId) return
@@ -55,11 +57,13 @@ function FichaSemovienteModal({ animalId, onCerrar }) {
       setAnimal(null)
       setUnidad('')
       setError('')
+      setFotos([])
+      setErrorFotos('')
 
       const { data, error: errorAnimal } = await supabase
         .from('semovientes')
         .select(`
-          id, codigo, especie, categoria, raza, sexo,
+          id, codigo, codigo_activo, especie, categoria, raza, sexo,
           fecha_nacimiento, fecha_ingreso, procedencia,
           marca_ancla, vacuna_brucelosis, estado,
           observaciones, unidad_id, created_at, updated_at
@@ -89,6 +93,29 @@ function FichaSemovienteModal({ animalId, onCerrar }) {
         setUnidad(unidadData.nombre)
       }
 
+      // Las tres imagenes permanecen en un bucket privado. Se firman URLs
+      // temporales solo para sesiones autorizadas por RLS.
+      const { data: filasFotos, error: falloFotos } = await supabase
+        .from('semoviente_fotografias')
+        .select('vista,ruta')
+        .eq('semoviente_id', animalId)
+
+      if (!activo) return
+      if (falloFotos) {
+        setErrorFotos('No fue posible consultar las fotografías. Verifique la actualización de Supabase.')
+      } else if (filasFotos?.length) {
+        const urls = await Promise.all(filasFotos.map(async fila => {
+          const { data: firma, error: falloFirma } = await supabase.storage
+            .from('semovientes-fotos')
+            .createSignedUrl(fila.ruta, 60 * 20)
+          return falloFirma ? null : { vista: fila.vista, url: firma.signedUrl }
+        }))
+        if (!activo) return
+        setFotos(urls.filter(Boolean))
+        if (urls.some(foto => foto === null)) {
+          setErrorFotos('Alguna imagen no pudo abrirse con los permisos de esta sesión.')
+        }
+      }
       setCargando(false)
     }
 
@@ -167,6 +194,7 @@ function FichaSemovienteModal({ animalId, onCerrar }) {
               <h3>1. Identificación del animal</h3>
               <div className="fs-grid">
                 <Campo nombre="Código individual" valor={animal.codigo} />
+                <Campo nombre="Código del Activo" valor={animal.codigo_activo || 'Pendiente de asignación'} />
                 <Campo nombre="Especie" valor={NOMBRES[animal.especie]} />
                 <Campo nombre="Clase" valor={animal.categoria} />
                 <Campo nombre="Raza" valor={animal.raza} />
@@ -197,7 +225,29 @@ function FichaSemovienteModal({ animalId, onCerrar }) {
                 <p>{animal.observaciones || 'Sin observaciones'}</p>
               </div>
 
-              <h3>4. Control institucional</h3>
+              <h3>4. Fotografías del semoviente</h3>
+              {errorFotos && <p className="fs-error" role="status">{errorFotos}</p>}
+              {fotos.length ? (
+                <div className="fs-fotos-grid">
+                  {[
+                    ['frontal', 'Frontal'],
+                    ['lateral_izquierdo', 'Lateral izquierdo'],
+                    ['lateral_derecho', 'Lateral derecho'],
+                  ].map(([vista, titulo]) => {
+                    const foto = fotos.find(item => item.vista === vista)
+                    return (
+                      <div className="fs-foto" key={vista}>
+                        {foto
+                          ? <a href={foto.url} target="_blank" rel="noopener noreferrer"><img src={foto.url} alt={`Semoviente: ${titulo.toLowerCase()}`} /></a>
+                          : <div className="fs-foto-vacia">No disponible</div>}
+                        <strong>{titulo}</strong>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : !errorFotos ? <p className="fs-sin-fotos">No se adjuntaron fotografías.</p> : null}
+
+              <h3>5. Control institucional</h3>
               <div className="fs-grid">
                 <Campo nombre="Fecha de registro"
                   valor={fecha(animal.created_at, true)} />
