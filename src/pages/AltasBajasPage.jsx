@@ -5,6 +5,7 @@ import { usePerfil } from '../contexts/PerfilContext'
 import { puedeRegistrar } from '../auth/permisos'
 import ActaDefuncionPanel from '../components/documentos/ActaDefuncionPanel'
 import { fotoComoJpeg } from '../services/actaDefuncionWord'
+import { mensajeErrorBaja } from '../utils/erroresBaja'
 import './AltasBajasPage.css'
 
 const TAMANO = 25
@@ -20,9 +21,7 @@ function fecha(valor) {
   return `${dia}/${mes}/${anio}`
 }
 function errorConsulta(error, accion) {
-  if (accion === 'registrar la baja' && /El semoviente tiene un traslado abierto/i.test(error?.message || '')) {
-    return 'El semoviente tiene un traslado pendiente o aprobado. Solicite al Supervisor Departamento VII que lo resuelva en Movimientos antes de registrar la baja. No se ha registrado la baja.'
-  }
+  if (accion === 'registrar la baja') return mensajeErrorBaja(error)
   if (['PGRST205', '42P01', 'PGRST202'].includes(error?.code)) return 'El módulo de bajas todavía no está disponible. Contacte al administrador.'
   return `No se pudo ${accion}. Verifique la conexión y sus permisos e inténtelo nuevamente.`
 }
