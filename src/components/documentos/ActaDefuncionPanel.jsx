@@ -31,15 +31,17 @@ export default function ActaDefuncionPanel({ baja, animal }) {
   let vigente=true
   async function cargar(){
    setFoto(null);setFotoEstado('consultando');setFotoDetalle('');setError('');setMensaje('')
-   const {data,error:fallo}=await supabase.storage.from('bajas-fotos').download(rutaFotoBaja(baja))
-   if(!vigente)return
-   if(fallo){
+   try {
+    const {data,error:fallo}=await supabase.storage.from('bajas-fotos').download(rutaFotoBaja(baja))
+    if(!vigente)return
+    if(fallo)throw fallo
+    if(!data?.size){setFotoEstado('no_disponible');setFotoDetalle('La fotografía guardada está vacía.');return}
+    setFoto(data);setFotoEstado('guardada')
+   } catch {
+    if(!vigente)return
     setFotoEstado('no_disponible')
-    setFotoDetalle('No fue posible descargar la fotografía asociada a esta baja. Puede que el archivo no exista o que los permisos de Storage impidan leerlo.')
-    return
+    setFotoDetalle('No fue posible descargar la fotografía asociada a esta baja. Verifique la conexión, que el archivo exista y los permisos de Storage.')
    }
-   if(!data?.size){setFotoEstado('no_disponible');setFotoDetalle('La fotografía guardada está vacía.');return}
-   setFoto(data);setFotoEstado('guardada')
   }
   cargar()
   return ()=>{vigente=false}

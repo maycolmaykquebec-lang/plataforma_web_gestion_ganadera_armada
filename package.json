@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node scripts/preparar-instalador-supabase.mjs && node --test tests/permisos.test.js && node tests/seguridad-db.mjs && node tests/seguridad-existente.mjs && node tests/asignacion-perfiles.mjs && node --test tests/af9-exportacion.test.js && node tests/modulos-pendientes.mjs",
+    "test": "node scripts/preparar-instalador-supabase.mjs && node --test tests/permisos.test.js && node tests/seguridad-db.mjs && node tests/seguridad-existente.mjs && node tests/asignacion-perfiles.mjs && node --test tests/af9-exportacion.test.js tests/acta-defuncion.test.js && node tests/modulos-pendientes.mjs",
     "sql:preparar": "node scripts/preparar-instalador-supabase.mjs"
   },
   "dependencies": {

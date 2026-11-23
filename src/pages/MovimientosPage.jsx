@@ -39,10 +39,11 @@ function errorCancelacion(e) {
   const detalle = e?.message || ''
   if (e?.code === '42501') return 'No tiene permiso para cancelar esta solicitud. Solo el Supervisor Departamento VII puede hacerlo.'
   if (/Solo se puede cancelar un traslado aprobado/i.test(detalle)) return 'La solicitud ya no está aprobada o el traslado ya fue ejecutado. Actualice el listado.'
+  if (/Solo se puede cancelar una solicitud pendiente/i.test(detalle)) return 'La solicitud ya no está pendiente o ya fue autorizada. Actualice el listado.'
   if (/semoviente ya no est[aá] activo/i.test(detalle)) return 'No es posible cancelar: el semoviente ya no está activo en la unidad de origen.'
   if (/fundamento de cancelaci[oó]n/i.test(detalle)) return 'La justificación debe contener entre 15 y 1000 caracteres.'
   if (/referencia documental/i.test(detalle)) return 'La referencia documental no debe superar 200 caracteres.'
-  if (e?.code === 'PGRST202' || e?.code === '42883') return 'Todavía no está instalada la migración V4.2 en Supabase.'
+  if (e?.code === 'PGRST202' || e?.code === '42883') return 'La función de cancelación no está instalada en Supabase. Contacte al administrador.'
   return 'No se pudo cancelar el traslado. Revise su estado, los permisos y la conexión.'
 }
 
@@ -53,6 +54,7 @@ function CancelarTrasladoModal({ solicitud, nombreUnidad, onCerrar, onCancelado 
   const [confirmado, setConfirmado] = useState(false)
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
+  const pendiente = solicitud.estado === 'pendiente'
 
   useEffect(() => {
     const elemento = dialogo.current
@@ -70,7 +72,7 @@ function CancelarTrasladoModal({ solicitud, nombreUnidad, onCerrar, onCancelado 
     setGuardando(true)
     setError('')
     try {
-      const resultado = await supabase.rpc('rb_cancelar_traslado_aprobado', {
+      const resultado = await supabase.rpc(pendiente ? 'rb_cancelar_traslado_pendiente' : 'rb_cancelar_traslado_aprobado', {
         p_solicitud_id: solicitud.id,
         p_motivo: motivo.trim(),
         p_referencia_documental: referencia.trim() || null,
@@ -87,17 +89,17 @@ function CancelarTrasladoModal({ solicitud, nombreUnidad, onCerrar, onCancelado 
   return <dialog ref={dialogo} className="mov-cancel-dialog" aria-labelledby="mov-cancel-titulo"
     onCancel={e => { if (guardando) e.preventDefault(); else onCerrar() }}>
     <div className="mov-cancel-header">
-      <div><small>SUPERVISOR DEPARTAMENTO VII</small><h2 id="mov-cancel-titulo">Cancelar traslado aprobado</h2></div>
+      <div><small>SUPERVISOR DEPARTAMENTO VII</small><h2 id="mov-cancel-titulo">{pendiente ? 'Cancelar solicitud pendiente' : 'Cancelar traslado aprobado'}</h2></div>
       <button type="button" className="mov-secundario" disabled={guardando} onClick={onCerrar} aria-label="Cerrar">×</button>
     </div>
-    <p>Esta operación <strong>no da de baja al semoviente</strong>. Solo cancela la autorización de un traslado que no llegó a ejecutarse.</p>
+    <p>Esta operación <strong>no da de baja al semoviente</strong>. {pendiente ? 'Cancela la solicitud antes de autorizarla.' : 'Cancela la autorización de un traslado que no llegó a ejecutarse.'}</p>
     <dl className="mov-cancel-resumen">
       <div><dt>Solicitud</dt><dd>N.º {solicitud.id}</dd></div>
       <div><dt>Semoviente</dt><dd>{solicitud.semoviente?.codigo || `ID ${solicitud.semoviente_id}`}</dd></div>
       <div><dt>Origen</dt><dd>{nombreUnidad(solicitud.unidad_origen_id)}</dd></div>
       <div><dt>Destino</dt><dd>{nombreUnidad(solicitud.unidad_destino_id)}</dd></div>
-      <div><dt>Estado</dt><dd>Aprobado, no ejecutado</dd></div>
-      <div><dt>Autorización original</dt><dd>{fechaHoraVisible(solicitud.fecha_autorizacion)}</dd></div>
+      <div><dt>Estado</dt><dd>{pendiente ? 'Pendiente de autorización' : 'Aprobado, no ejecutado'}</dd></div>
+      {!pendiente && <div><dt>Autorización original</dt><dd>{fechaHoraVisible(solicitud.fecha_autorizacion)}</dd></div>}
     </dl>
     <form onSubmit={confirmar} className="mov-cancel-form">
       <label htmlFor="mov-fundamento">Justificación de la cancelación <span aria-hidden="true">*</span>
@@ -115,7 +117,7 @@ function CancelarTrasladoModal({ solicitud, nombreUnidad, onCerrar, onCancelado 
           onChange={e => setConfirmado(e.target.checked)} />
         <span>Confirmo que el traslado no fue ejecutado y que la justificación corresponde a hechos documentados.</span>
       </label>
-      <p className="mov-cancel-nota">La solicitud quedará con estado <strong>Cancelado</strong>. Se conservarán el autorizador y la fecha de aprobación originales, y se registrará la cancelación en auditoría.</p>
+      <p className="mov-cancel-nota">La solicitud quedará con estado <strong>Cancelado</strong>. {pendiente ? 'No se registrará ninguna autorización.' : 'Se conservarán el autorizador y la fecha de aprobación originales.'} La cancelación quedará registrada en auditoría.</p>
       {error && <p className="mov-error" role="alert">{error}</p>}
       <div className="mov-cancel-actions">
         <button type="button" className="mov-secundario" disabled={guardando} onClick={onCerrar}>Volver</button>
@@ -275,7 +277,7 @@ export default function MovimientosPage() {
             <td><div className="mov-botones">
               {supervisor && m.estado === 'pendiente' &&
                 <button disabled={ocupado} onClick={() => transicion('autorizar_movimiento', m.id)}>Autorizar</button>}
-              {supervisor && m.estado === 'aprobado' && !m.fecha_ejecucion &&
+              {supervisor && (m.estado === 'pendiente' || m.estado === 'aprobado') && !m.fecha_ejecucion &&
                 <button type="button" className="mov-peligro" disabled={ocupado}
                   onClick={() => { setMensaje(''); setError(''); setSolicitudCancelar(m) }}>
                   Cancelar traslado

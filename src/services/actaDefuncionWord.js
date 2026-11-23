@@ -51,6 +51,30 @@ export async function fotoComoJpeg(blob){
  }finally{URL.revokeObjectURL(url)}
 }
 function xmlEscape(valor){return String(valor??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]))}
+
+// La imagen flotante de la plantilla puede desbordar la fila y tapar las
+// firmas en Word/LibreOffice. Una imagen en línea ocupa espacio real en la
+// celda y queda centrada por el párrafo de la plantilla.
+function colocarFotoEnLinea(xml, idImagen){
+ let cambios=0
+ const resultado=xml.replace(/<wp:anchor\b[^>]*>[\s\S]*?<\/wp:anchor>/g, ancla=>{
+  if(!ancla.includes(`r:embed="${idImagen}"`))return ancla
+  cambios++
+  let imagen=ancla
+   .replace(/^<wp:anchor\b[^>]*>/, '<wp:inline distT="0" distB="0" distL="0" distR="0">')
+   .replace(/<\/wp:anchor>$/, '</wp:inline>')
+   .replace(/<wp:simplePos\b[^>]*\/>/, '')
+   .replace(/<wp:positionH\b[^>]*>[\s\S]*?<\/wp:positionH>/, '')
+   .replace(/<wp:positionV\b[^>]*>[\s\S]*?<\/wp:positionV>/, '')
+   .replace(/<wp:wrapNone\s*\/>/, '')
+   .replace(/<wp:extent\b[^>]*\/>/, '<wp:extent cx="2133600" cy="1600200"/>')
+   .replace(/<a:ext\b[^>]*\/>/, '<a:ext cx="2133600" cy="1600200"/>')
+  return imagen
+ })
+ if(cambios!==1)throw new Error('No se pudo situar la fotografía dentro de la tabla del acta.')
+ return resultado
+}
+
 export function datosActa(baja,animal,formulario){
  const un=unidadDocumento(baja.unidad)
  const {anio,mes,dia}=fechaPartes(formulario.fechaActa)
@@ -94,30 +118,35 @@ export function datosActa(baja,animal,formulario){
   LUGAR_CAUSA:causa.toUpperCase(),
  }
 }
-export async function descargarActaWord({baja,animal,formulario,fotoBlob}){
+// Construye el documento sin interactuar con la interfaz. Así se comprueban los
+// bytes y las relaciones OOXML de la plantilla real antes de iniciar la descarga.
+export async function construirActaWord({baja,animal,formulario,plantillaBytes,fotoBytes}){
  const valores=datosActa(baja,animal,formulario)
- if(!fotoBlob || fotoBlob.size===0){
-  throw new Error(`No hay fotografía de evidencia disponible para la baja N.º ${baja.id} de ${valores.UNIDAD}. Abra la baja correcta o compruebe su archivo en Storage. No se descargará el Word con una imagen de reserva.`)
- }
- // El archivo almacenado es JPEG incluso si se seleccionó originalmente WebP o PNG.
- // Convertir de nuevo garantiza una imagen JPEG válida antes de incrustarla en el DOCX.
- const jpg=await fotoComoJpeg(fotoBlob)
- const fotoBytes=new Uint8Array(await jpg.arrayBuffer())
- if(fotoBytes.length<100 || fotoBytes[0]!==0xff || fotoBytes[1]!==0xd8 || fotoBytes[fotoBytes.length-2]!==0xff || fotoBytes[fotoBytes.length-1]!==0xd9){
+ if(!(fotoBytes instanceof Uint8Array) || fotoBytes.length<100 || fotoBytes[0]!==0xff || fotoBytes[1]!==0xd8 || fotoBytes[fotoBytes.length-2]!==0xff || fotoBytes[fotoBytes.length-1]!==0xd9){
   throw new Error('La fotografía recuperada no pudo convertirse a un JPEG válido para Word.')
  }
- const base=import.meta.env.BASE_URL||'/'
- const respuesta=await fetch(`${base}plantillas/acta_defuncion_institucional.docx`,{cache:'no-store'})
- if(!respuesta.ok)throw new Error('No se encontró la plantilla Word del acta. Revise la instalación.')
- const archivos=await abrirDocx(await respuesta.arrayBuffer())
- const encontrados=new Set()
+ const archivos=await abrirDocx(plantillaBytes)
+ const relaciones=archivos.find(a=>a.nombre==='word/_rels/document.xml.rels')
+ const documento=archivos.find(a=>a.nombre==='word/document.xml')
+ if(!relaciones || !documento)throw new Error('La plantilla Word no contiene el documento o sus relaciones de imágenes.')
+ const relacionesXml=new TextDecoder('utf-8').decode(relaciones.datos)
+ const documentoXml=new TextDecoder('utf-8').decode(documento.datos)
+ // La imagen debe estar realmente enlazada desde el documento, no solo existir
+ // dentro del ZIP; de lo contrario Word mostraría el espacio vacío.
+ const relacionImagen=relacionesXml.match(/<Relationship\b(?=[^>]*\bTarget="media\/image2\.jpeg")(?=[^>]*\bType="[^"]*\/image")(?=[^>]*\bId="([^"]+)")[^>]*\/?\s*>/)
+ if(!relacionImagen || !documentoXml.includes(`r:embed="${relacionImagen[1]}"`)){
+  throw new Error('La plantilla Word no vincula correctamente el espacio de la fotografía. Revise la instalación.')
+ }
+ const encontrados=new Map()
  let fotografiaInsertada=false
  for(const archivo of archivos){
   if(archivo.nombre==='word/document.xml'||archivo.nombre==='word/header1.xml'){
    let xml=new TextDecoder('utf-8').decode(archivo.datos)
+   if(archivo.nombre==='word/document.xml')xml=colocarFotoEnLinea(xml,relacionImagen[1])
    for(const [clave,valor] of Object.entries(valores)){
     const token=`{{${clave}}}`
-    if(xml.includes(token)){encontrados.add(clave);xml=xml.split(token).join(xmlEscape(valor))}
+    const partes=xml.split(token)
+    if(partes.length>1){encontrados.set(clave,(encontrados.get(clave)||0)+partes.length-1);xml=partes.join(xmlEscape(valor))}
    }
    archivo.datos=new TextEncoder().encode(xml)
   }
@@ -129,13 +158,30 @@ export async function descargarActaWord({baja,animal,formulario,fotoBlob}){
  if(!fotografiaInsertada)throw new Error('La plantilla Word no contiene el espacio correcto para insertar la fotografía.')
  const sinToken=Object.keys(valores).filter(k=>!encontrados.has(k))
  if(sinToken.length)throw new Error('La plantilla no contiene todos los campos necesarios: '+sinToken.join(', '))
+ if(['VAQUERO_NOMBRE','JEFE_NOMBRE'].some(k=>encontrados.get(k)<2)){
+  throw new Error('La plantilla debe incluir los dos firmantes en el cuerpo y en los espacios de firma.')
+ }
  // Verificar que la sustitución no dejó marcadores institucionales pendientes.
  for(const archivo of archivos){
   if((archivo.nombre==='word/document.xml'||archivo.nombre==='word/header1.xml') && /\{\{[A-Z_]+\}\}/.test(new TextDecoder('utf-8').decode(archivo.datos))){
    throw new Error('El acta conserva textos de ejemplo. Se detuvo la descarga para evitar datos incorrectos.')
   }
  }
- const blob=new Blob([crearDocx(archivos)],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
+ return {bytes:crearDocx(archivos),valores}
+}
+
+export async function descargarActaWord({baja,animal,formulario,fotoBlob}){
+ if(!fotoBlob || fotoBlob.size===0){
+  throw new Error(`No hay fotografía de evidencia disponible para la baja N.º ${baja.id}. Compruebe su archivo en Storage; no se descargará una imagen de reserva.`)
+ }
+ // Normalizar JPG, PNG o WebP para que el archivo incrustado coincida con su tipo.
+ const jpg=await fotoComoJpeg(fotoBlob)
+ const fotoBytes=new Uint8Array(await jpg.arrayBuffer())
+ const base=import.meta.env.BASE_URL||'/'
+ const respuesta=await fetch(`${base}plantillas/acta_defuncion_institucional.docx`,{cache:'no-store'})
+ if(!respuesta.ok)throw new Error('No se encontró la plantilla Word del acta. Revise la instalación.')
+ const {bytes,valores}=await construirActaWord({baja,animal,formulario,fotoBytes,plantillaBytes:await respuesta.arrayBuffer()})
+ const blob=new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
  const enlace=document.createElement('a'),url=URL.createObjectURL(blob)
  enlace.href=url;enlace.download=`ACTA_DEFUNCION_${valores.UNIDAD.replace(/\s/g,'_')}_${String(animal.codigo).replace(/[^a-zA-Z0-9_-]/g,'_')}_${baja.id}.docx`
  document.body.append(enlace);enlace.click();enlace.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)

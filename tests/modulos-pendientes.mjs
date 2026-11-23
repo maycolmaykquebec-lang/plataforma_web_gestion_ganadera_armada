@@ -114,6 +114,63 @@ assert.equal((await como(1, 'select estado from public.semovientes where id=$1',
 assert.equal((await como(1, 'select id from public.rb_bajas where semoviente_id=$1', [c])).length, 0)
 await como(5, 'select public.confirmar_recepcion($1)', [movimiento])
 
+// V4.2: un traslado aprobado impide la baja hasta que un supervisor autorizado
+// lo cancele expresamente; la autorización original y la trazabilidad se conservan.
+await db.exec('reset role')
+await db.exec(await readFile(new URL('supabase/actualizaciones/07_cancelar_traslado_aprobado.sql', root), 'utf8'))
+const d = await animal(1, 'RB-CANCELACION-PRUEBA')
+const trasladoCancelado = (await como(1, 'select public.solicitar_movimiento($1,1,$2,current_date) as id', [d, 'Traslado ficticio sujeto a cancelación']))[0].id
+const cancelar = 'select public.rb_cancelar_traslado_aprobado($1,$2,$3) as id'
+const fundamento = 'Cancelación documentada de traslado ficticio'
+await no(1, baja, [d, 'defuncion', motivo])
+await no(0, cancelar, [trasladoCancelado, fundamento, null]) // aún pendiente
+await como(0, 'select public.autorizar_movimiento($1)', [trasladoCancelado])
+const aprobado = (await admin('select autorizado_por,fecha_autorizacion from public.solicitudes_movimientos where id=$1', [trasladoCancelado]))[0]
+await no(1, baja, [d, 'defuncion', motivo])
+await no(1, cancelar, [trasladoCancelado, fundamento, null]) // responsable no puede cancelar
+await no(0, cancelar, [trasladoCancelado, 'breve', null])
+await como(0, cancelar, [trasladoCancelado, fundamento, 'REF-PRUEBA'])
+const cancelado = (await admin('select estado,fecha_ejecucion,autorizado_por,fecha_autorizacion,cancelado_por,motivo_cancelacion from public.solicitudes_movimientos where id=$1', [trasladoCancelado]))[0]
+assert.equal(cancelado.estado, 'cancelado')
+assert.equal(cancelado.fecha_ejecucion, null)
+assert.equal(cancelado.autorizado_por, aprobado.autorizado_por)
+assert.deepEqual(cancelado.fecha_autorizacion, aprobado.fecha_autorizacion)
+assert.equal(cancelado.cancelado_por, uuid(0))
+assert.equal(cancelado.motivo_cancelacion, fundamento)
+assert.equal((await como(1, 'select estado from public.semovientes where id=$1', [d]))[0].estado, 'Activo')
+assert.ok((await como(1, baja, [d, 'defuncion', motivo]))[0].id)
+assert.equal((await como(1, 'select estado from public.semovientes where id=$1', [d]))[0].estado, 'Baja')
+assert.equal((await como(1, "select id from public.semoviente_eventos where semoviente_id=$1 and titulo='Traslado aprobado cancelado antes de su ejecución'", [d])).length, 1)
+await no(0, cancelar, [trasladoCancelado, fundamento, null])
+await no(0, cancelar, [movimiento, fundamento, null]) // traslado ya ejecutado
+
+// Una solicitud pendiente también puede cancelarse sin autorizar un traslado ficticio.
+await db.exec('reset role')
+await db.exec(await readFile(new URL('supabase/actualizaciones/11_cancelar_traslado_pendiente.sql', root), 'utf8'))
+const verificacionPendiente = (await rows(await readFile(new URL('supabase/actualizaciones/12_verificar_cancelacion_pendiente.sql', root), 'utf8')))[0]
+assert.deepEqual(Object.values(verificacionPendiente), [true, true, true, false])
+await admin(`insert into public.perfiles(id,nombre_completo,rol_id,departamento_id,division_id,activo)
+  select $1,'Supervisor ajeno ficticio',id,2,2,true from public.roles_sistema where codigo='SUP_DEPTO_VII'`, [uuid(9)])
+const e = await animal(1, 'RB-PENDIENTE-PRUEBA')
+const trasladoPendiente = (await como(1, 'select public.solicitar_movimiento($1,1,$2,current_date) as id', [e, 'Solicitud ficticia pendiente']))[0].id
+const cancelarPendiente = 'select public.rb_cancelar_traslado_pendiente($1,$2,$3) as id'
+await no(1, baja, [e, 'defuncion', motivo])
+await no(1, cancelarPendiente, [trasladoPendiente, fundamento, null])
+await no(4, cancelarPendiente, [trasladoPendiente, fundamento, null])
+await no(9, cancelarPendiente, [trasladoPendiente, fundamento, null])
+await no(0, cancelarPendiente, [trasladoPendiente, 'breve', null])
+await no(0, cancelarPendiente, [movimiento, fundamento, null])
+await como(0, cancelarPendiente, [trasladoPendiente, fundamento, 'REF-PENDIENTE'])
+const pendienteCancelado = (await admin('select estado,autorizado_por,fecha_autorizacion,fecha_ejecucion,cancelado_por from public.solicitudes_movimientos where id=$1', [trasladoPendiente]))[0]
+assert.equal(pendienteCancelado.estado, 'cancelado')
+assert.equal(pendienteCancelado.autorizado_por, null)
+assert.equal(pendienteCancelado.fecha_autorizacion, null)
+assert.equal(pendienteCancelado.fecha_ejecucion, null)
+assert.equal(pendienteCancelado.cancelado_por, uuid(0))
+assert.ok((await como(1, baja, [e, 'defuncion', motivo]))[0].id)
+assert.equal((await como(1, "select id from public.semoviente_eventos where semoviente_id=$1 and titulo='Solicitud de traslado pendiente cancelada'", [e])).length, 1)
+await no(0, cancelarPendiente, [trasladoPendiente, fundamento, null])
+
 const sanitario = `insert into public.controles_sanitarios(semoviente_id,tipo_control,fecha_control,responsable_sanitario,motivo)
  values($1,'Revisión',current_date,'Veterinario ficticio',$2)`
 await como(1, sanitario, [b, motivo])
@@ -150,7 +207,7 @@ await assert.rejects(() => db.query("select public.rb_registrar_baja(1,'otro',cu
 await db.exec('reset role')
 await assert.rejects(() => db.exec(actualizacion), /actualización ya existe/)
 await db.exec('rollback')
-assert.equal((await rows('select count(*)::int as n from public.rb_bajas'))[0].n, 1)
+assert.equal((await rows('select count(*)::int as n from public.rb_bajas'))[0].n, 3)
 const conDetallesPorDefecto = await animal(1, 'RB-BAJA-SIN-DETALLE')
 const bajaPorDefecto = (await como(1, baja, [conDetallesPorDefecto, 'otro', motivo]))[0].id
 assert.deepEqual((await como(1, 'select detalles from public.rb_bajas where id=$1', [bajaPorDefecto]))[0].detalles, {})
