@@ -4,7 +4,7 @@
  */
 const ESPECIES = Object.freeze({
   bovino: 'Ganado vacuno', equino: 'Ganado equino', caprino: 'Ganado caprino',
-  mular: 'Ganado mular', avicola: 'Ganado avícola', porcino: 'Ganado porcino',
+  mular: 'Ganado mular', porcino: 'Ganado porcino',
 })
 
 export const AF9_NOMBRES_INICIALES = Object.freeze(['', '', '', '', ''])

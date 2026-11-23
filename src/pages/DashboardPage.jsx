@@ -5,6 +5,8 @@ import { usePerfil } from '../contexts/PerfilContext'
 import { supabase } from '../services/supabaseClient'
 import StatCard from '../components/dashboard/StatCard'
 import SpeciesCard from '../components/dashboard/SpeciesCard'
+import { identidadUnidad } from '../components/layout/identidadUnidad'
+import { ESPECIES_HABILITADAS } from '../utils/especies'
 import './DashboardPage.css'
 
 const fotografias = {
@@ -36,13 +38,6 @@ const fotografias = {
     "licencia": "CC BY-SA 4.0",
     "licenciaUrl": "https://creativecommons.org/licenses/by-sa/4.0"
   },
-  "avicola": {
-    "imagen": "/images/semovientes/avicola.jpg",
-    "autor": "safaritravelplus",
-    "pagina": "https://commons.wikimedia.org/wiki/File:Free_Range_Chicken.jpg",
-    "licencia": "CC0",
-    "licenciaUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
-  },
   "porcino": {
     "imagen": "/images/semovientes/porcino.jpg",
     "autor": "Anonymous",
@@ -56,38 +51,27 @@ const especies = [
   {
     id: 'bovino',
     nombre: 'Ganado vacuno',
-    cantidad: 0,
-    icono: '🐄'
+    cantidad: 0
   },
   {
     id: 'equino',
     nombre: 'Ganado equino',
-    cantidad: 0,
-    icono: '🐎'
+    cantidad: 0
   },
   {
     id: 'caprino',
     nombre: 'Ganado caprino',
-    cantidad: 0,
-    icono: '🐐'
+    cantidad: 0
   },
   {
     id: 'mular',
     nombre: 'Ganado mular',
-    cantidad: 0,
-    icono: '🫏'
-  },
-  {
-    id: 'avicola',
-    nombre: 'Ganado avícola',
-    cantidad: 0,
-    icono: '🐓'
+    cantidad: 0
   },
   {
     id: 'porcino',
     nombre: 'Ganado porcino',
-    cantidad: 0,
-    icono: '🐖'
+    cantidad: 0
   }
 ]
 
@@ -95,6 +79,7 @@ const especies = [
 function DashboardPage() {
   const navigate = useNavigate()
   const perfil = usePerfil()
+  const identidad = identidadUnidad(perfil)
   const unidades = perfil?.rol?.codigo === 'RESP_UNIDAD'
     ? [{ nombre: perfil.unidad.nombre, tipo: perfil.unidad.sigla }]
     : [
@@ -130,7 +115,7 @@ function DashboardPage() {
       const contar = (filtros = []) => {
         let consulta = supabase
           .from('semovientes')
-          .select('id', { count: 'exact', head: true })
+          .select('id', { count: 'exact', head: true }).in('especie', ESPECIES_HABILITADAS)
         for (const [campo, valor] of filtros) {
           consulta = consulta.eq(campo, valor)
         }
@@ -183,28 +168,20 @@ function DashboardPage() {
 
     cargarResumen()
     return () => { vigente = false }
-  }, [rol])
+  }, [rol, perfil?.unidad?.id])
 
   const mostrar = (valor) =>
     resumen.cargando ? '…' : resumen.error ? '—' : (valor ?? 0)
 
   return (
     <div className="rio_blanco-dashboard">
-      <div className="rio_blanco-warning" role="note">
-        <strong>DEMOSTRACIÓN PÚBLICA</strong>
-        <span>
-          No ingresar información institucional real.
-          Esta versión utiliza datos de ejemplo.
-        </span>
-      </div>
-
       <section className="rio_blanco-hero">
         <div className="rio_blanco-hero-content">
           <span className="rio_blanco-eyebrow">
             ARMADA BOLIVIANA · DEPARTAMENTO VII
           </span>
 
-          <h1>RÍO BLANCO</h1>
+          <h1>{identidad.nombre}</h1>
           <h2>Panel principal</h2>
 
           <p>
@@ -212,8 +189,7 @@ function DashboardPage() {
           </p>
 
           <p className="rio_blanco-hero-description">
-            Registro, control y trazabilidad de semovientes
-            de la Unidad Operativa de Servicios y Producción Ganadera "RÍO BLANCO", dependiente de la DIV. "B" "PRODUCCIÓN" del DPTO. VII.
+            Registro, control y trazabilidad de semovientes {rol === 'RESP_UNIDAD' ? `de la unidad ${identidad.nombre}, dependiente` : 'de las unidades autorizadas, dependientes'} de la DIV. "B" "PRODUCCIÓN" del DPTO. VII.
           </p>
 
           <div className="rio_blanco-hero-actions">

@@ -8,7 +8,6 @@ const CLASES = {
   equino: ['Potro', 'Potranca', 'Caballo', 'Yegua'],
   caprino: ['Cabrito', 'Cabrita', 'Macho', 'Cabra'],
   mular: ['Cría', 'Macho', 'Hembra'],
-  avicola: ['Pollito', 'Pollita', 'Gallo', 'Gallina'],
   porcino: ['Lechón', 'Lechona', 'Verraco', 'Cerda'],
 }
 
@@ -17,7 +16,6 @@ const NOMBRES = {
   equino: 'Ganado equino',
   caprino: 'Ganado caprino',
   mular: 'Ganado mular',
-  avicola: 'Ganado avícola',
   porcino: 'Ganado porcino',
 }
 
@@ -322,9 +320,6 @@ function NuevoSemovienteModal({ abierto, onCerrar, onGuardado, especie, unidad }
 
         <form onSubmit={guardar} noValidate>
           <div className="ns-contenido">
-            <div className="ns-aviso">
-              ENTORNO DE PRUEBAS: utilizar únicamente datos ficticios. Los registros y fotografías se almacenan en Supabase.
-            </div>
 
             <h3>1. Identificación del animal</h3>
             <div className="ns-grid ns-codigos">

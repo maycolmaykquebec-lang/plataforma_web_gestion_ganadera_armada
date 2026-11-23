@@ -11,27 +11,23 @@ const TAMANO_PAGINA = 25
 
 const especies = [
   {
-    id: 'bovino', nombre: 'Ganado vacuno', icono: '🐄',
+    id: 'bovino', nombre: 'Ganado vacuno',
     clases: ['Ternero','Ternera','Torillo','Vaquilla','Toro','Vaca','Novillo']
   },
   {
-    id: 'equino', nombre: 'Ganado equino', icono: '🐎',
+    id: 'equino', nombre: 'Ganado equino',
     clases: ['Potro','Potranca','Caballo','Yegua']
   },
   {
-    id: 'caprino', nombre: 'Ganado caprino', icono: '🐐',
+    id: 'caprino', nombre: 'Ganado caprino',
     clases: ['Cabrito','Cabrita','Macho','Cabra']
   },
   {
-    id: 'mular', nombre: 'Ganado mular', icono: '🫏',
+    id: 'mular', nombre: 'Ganado mular',
     clases: ['Cría','Macho','Hembra']
   },
   {
-    id: 'avicola', nombre: 'Ganado avícola', icono: '🐓',
-    clases: ['Pollito','Pollita','Gallo','Gallina']
-  },
-  {
-    id: 'porcino', nombre: 'Ganado porcino', icono: '🐖',
+    id: 'porcino', nombre: 'Ganado porcino',
     clases: ['Lechón','Lechona','Verraco','Cerda']
   }
 ]
@@ -223,13 +219,6 @@ function SemovientesPage() {
 
   return (
     <div className="rio_blanco-registro-page">
-      <div className="rio_blanco-registro-aviso">
-        <strong>DEMOSTRACIÓN PÚBLICA</strong>
-        <span>
-          Utilizar únicamente datos ficticios durante el desarrollo de RIO_BLANCO.
-        </span>
-      </div>
-
       <section className="rio_blanco-registro-banner">
         <div className="rio_blanco-registro-banner-content">
           <button
@@ -245,7 +234,6 @@ function SemovientesPage() {
           </span>
 
           <div className="rio_blanco-registro-titulo">
-            <span aria-hidden="true">{especie.icono}</span>
             <h1>{especie.nombre}</h1>
           </div>
 

@@ -3,13 +3,14 @@ import { consultaGeneral } from '../auth/permisos'
 import { usePerfil } from '../contexts/PerfilContext'
 import { supabase } from '../services/supabaseClient'
 import PerfilHistorialSemoviente from '../components/historial/PerfilHistorialSemoviente'
+import { ESPECIES_HABILITADAS } from '../utils/especies'
 import './HistorialIndividualPage.css'
 
 const POR_PAGINA = 15
 const ESPECIES = [
   ['bovino', 'Ganado vacuno'], ['equino', 'Ganado equino'],
   ['caprino', 'Ganado caprino'], ['mular', 'Ganado mular'],
-  ['avicola', 'Ganado avícola'], ['porcino', 'Ganado porcino'],
+  ['porcino', 'Ganado porcino'],
 ]
 const IMAGENES = Object.fromEntries(ESPECIES.map(([id]) => [id, `/images/semovientes/${id}.jpg`]))
 
@@ -52,7 +53,7 @@ export default function HistorialIndividualPage() {
       setCargando(true)
       setError('')
       let q = supabase.from('semovientes')
-        .select('id,codigo,codigo_activo,especie,sexo,categoria,raza,estado,unidad_id,fecha_nacimiento,created_at', { count: 'exact' })
+        .select('id,codigo,codigo_activo,especie,sexo,categoria,raza,estado,unidad_id,fecha_nacimiento,created_at', { count: 'exact' }).in('especie', ESPECIES_HABILITADAS)
       if (especie !== 'todas') q = q.eq('especie', especie)
       if (general && unidad !== 'todas') q = q.eq('unidad_id', Number(unidad))
       if (busqueda) q = q.or(`codigo.eq.${busqueda},codigo_activo.eq.${busqueda}`)

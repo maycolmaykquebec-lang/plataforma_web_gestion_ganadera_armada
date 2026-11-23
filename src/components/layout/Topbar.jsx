@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../services/supabaseClient'
 import { usePerfil } from '../../contexts/PerfilContext'
+import { identidadUnidad } from './identidadUnidad'
 
 function Topbar() {
   const navigate = useNavigate()
@@ -13,13 +14,19 @@ function Topbar() {
   const rol = perfil?.rol?.codigo || ''
   const nombre = perfil?.nombre_completo || 'Usuario'
   const nombreRol = perfil?.rol?.nombre || 'Sin rol'
+  const identidad = identidadUnidad(perfil)
+
+  useEffect(() => {
+    document.title = `Registro y control de semovientes | ${identidad.nombre}`
+    return () => { document.title = 'Registro y control de semovientes | Armada Boliviana' }
+  }, [identidad.nombre])
 
   let dependencia = 'DIVISIÓN "B" PRODUCCIÓN'
 
   if (rol === 'SUP_DEPTO_VII') {
     dependencia = 'DEPARTAMENTO VII'
   } else if (perfil?.unidad) {
-    dependencia = `${perfil.unidad.sigla} "${perfil.unidad.nombre}"`
+    dependencia = `${perfil.unidad.sigla || identidad.sigla || 'UNIDAD'} "${identidad.nombre}"`
   }
 
   const cerrarSesion = async () => {
@@ -40,8 +47,8 @@ function Topbar() {
   return (
     <header className="topbar rio_blanco-topbar">
       <div className="topbar-title">
-        <strong>⚓ ARMADA BOLIVIANA</strong>
-        <span> / RÍO BLANCO</span>
+        <strong>ARMADA BOLIVIANA</strong>
+        <span> / {identidad.nombre}</span>
       </div>
 
       <div className="rio_blanco-user-area">

@@ -15,7 +15,8 @@ test('falta fecha no inventa edad', () => {
 test('sin corrimiento de fecha ISO de nacimiento', () => {
   assert.equal(fechaHistorial('2026-11-20'), '20/11/2026')
 })
-test('incluye seis especies, con sus nombres', () => {
-  assert.equal(Object.keys(ESPECIES_HISTORIAL).length, 6)
+test('incluye las cinco especies habilitadas, con sus nombres', () => {
+  assert.equal(Object.keys(ESPECIES_HISTORIAL).length, 5)
+  assert.equal(ESPECIES_HISTORIAL.avicola, undefined)
   assert.equal(ESPECIES_HISTORIAL.porcino, 'Ganado porcino')
 })

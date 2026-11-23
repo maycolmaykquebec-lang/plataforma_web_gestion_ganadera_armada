@@ -1,18 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../services/supabaseClient'
 import './InventarioGanaderoPage.css';
+import { ESPECIES_HABILITADAS } from '../utils/especies'
 import AF9OriginalPanel from '../components/inventario/AF9OriginalPanel.jsx';
 import { generarParteAF9Provisional } from './generarParteAF9Provisional.js';
 
 // RIO_BLANCO PASO 19.1: inventario de consulta. No escribe en Supabase.
 // Todas las consultas usan la sesión actual; PostgreSQL RLS determina las filas autorizadas.
 const ESPECIES = [
-  { valor: 'bovino', titulo: 'Ganado vacuno', emoji: '🐄' },
-  { valor: 'equino', titulo: 'Ganado equino', emoji: '🐎' },
-  { valor: 'caprino', titulo: 'Ganado caprino', emoji: '🐐' },
-  { valor: 'mular', titulo: 'Ganado mular', emoji: '🫏' },
-  { valor: 'avicola', titulo: 'Ganado avícola', emoji: '🐓' },
-  { valor: 'porcino', titulo: 'Ganado porcino', emoji: '🐖' },
+  { valor: 'bovino', titulo: 'Ganado vacuno' },
+  { valor: 'equino', titulo: 'Ganado equino' },
+  { valor: 'caprino', titulo: 'Ganado caprino' },
+  { valor: 'mular', titulo: 'Ganado mular' },
+  { valor: 'porcino', titulo: 'Ganado porcino' },
 ];
 const norm = (s) => String(s ?? '').trim().toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const especieTitulo = (s) => ESPECIES.find((e) => e.valor === norm(s))?.titulo || (s || 'Sin especie');
@@ -68,6 +68,7 @@ export default function InventarioGanaderoPage() {
           const { data, error: fallo } = await supabase
             .from('semovientes')
             .select('id,codigo,codigo_activo,marca_ancla,unidad_id,especie,categoria,sexo,raza,estado,fecha_nacimiento,fecha_ingreso')
+            .in('especie', ESPECIES_HABILITADAS)
             .order('id', { ascending: true })
             .range(desde, desde + TAMANO_BLOQUE - 1);
           if (fallo) throw fallo;
@@ -161,7 +162,7 @@ export default function InventarioGanaderoPage() {
     const url = URL.createObjectURL(new Blob([contenido], { type: 'text/csv;charset=utf-8' }));
     const enlace = document.createElement('a');
     enlace.href = url;
-    enlace.download = `RIO_BLANCO_${nombre}_${new Date().toISOString().slice(0, 10)}.csv`;
+    enlace.download = `INVENTARIO_${nombre}_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(enlace);
     enlace.click();
     enlace.remove();
@@ -185,7 +186,7 @@ export default function InventarioGanaderoPage() {
       const enlace = document.createElement('a');
       enlace.href = url;
       const especieArchivo = af9Especie === 'todas' ? 'general' : af9Especie;
-      enlace.download = `RIO_BLANCO_AF9_PROVISIONAL_${af9Mes}_${especieArchivo}.pdf`;
+      enlace.download = `AF9_PROVISIONAL_${af9Mes}_${especieArchivo}.pdf`;
       document.body.appendChild(enlace);
       enlace.click();
       enlace.remove();
@@ -204,7 +205,6 @@ export default function InventarioGanaderoPage() {
 
   return (
     <div className="rio_blanco-inv">
-      <div className="rio_blanco-inv-aviso"><strong>DEMOSTRACIÓN PÚBLICA</strong> · Utilice únicamente datos ficticios. Los registros guardados en Supabase no se eliminan al reiniciar Vite.</div>
       <header className="rio_blanco-inv-hero">
         <div className="rio_blanco-inv-kicker">ARMADA BOLIVIANA · DEPARTAMENTO VII · INVENTARIOS</div>
         <h1>{TITULO}</h1>
@@ -236,7 +236,7 @@ export default function InventarioGanaderoPage() {
         </div>
         <h3>Existencias activas por especie</h3>
         <div className="rio_blanco-inv-especies">
-          {porEspecie.map((e) => <button type="button" key={e.valor} aria-pressed={especie === e.valor} className={'rio_blanco-inv-especie' + (especie === e.valor ? ' elegida' : '')} onClick={() => {setEspecie(especie === e.valor ? 'todas' : e.valor);setClase('todas');setPagina(1);}}><span className="rio_blanco-inv-especie-titulo">{e.emoji} {e.titulo}</span><strong>{cargando || error ? '—' : e.activos.toLocaleString('es-BO')}</strong><small>activos visibles</small></button>)}
+          {porEspecie.map((e) => <button type="button" key={e.valor} aria-pressed={especie === e.valor} className={'rio_blanco-inv-especie' + (especie === e.valor ? ' elegida' : '')} onClick={() => {setEspecie(especie === e.valor ? 'todas' : e.valor);setClase('todas');setPagina(1);}}><span className="rio_blanco-inv-especie-titulo">{e.titulo}</span><strong>{cargando || error ? '—' : e.activos.toLocaleString('es-BO')}</strong><small>activos visibles</small></button>)}
         </div>
         <h3>Activos por clase</h3>
         {porClase.length ? <div className="rio_blanco-inv-clases">{porClase.map(([nombre, n]) => <span key={nombre}>{nombre}: <strong>{n}</strong></span>)}</div> : <p className="rio_blanco-inv-vacio">Sin animales activos en el alcance seleccionado.</p>}
@@ -246,7 +246,7 @@ export default function InventarioGanaderoPage() {
         <div className="rio_blanco-inv-panel-head"><div><h2 id="inv-especies-listado">Inventarios separados por especie</h2><p>Tarjetas con datos actuales y descarga CSV por especie. El CSV general respeta la unidad elegida, e incluye todas sus especies y estados.</p></div><button type="button" className="rio_blanco-inv-primary" disabled={!exportacionDisponible || filasGeneral.length === 0} onClick={() => descargarCSV(filasGeneral, 'Inventario_General')}>Exportar CSV general</button></div>
         <div className="rio_blanco-inv-bloques">
           {porEspecie.map((e) => <details key={e.valor} className="rio_blanco-inv-bloque" open={e.valor === 'bovino' ? true : undefined}>
-            <summary><span><strong>{e.emoji} {e.titulo}</strong><small>Total: {cargando || error ? '—' : e.total} · Activos: {cargando || error ? '—' : e.activos} · Bajas: {cargando || error ? '—' : e.bajas}</small></span><span className="rio_blanco-inv-expansion">Mostrar listado</span></summary>
+            <summary><span><strong>{e.titulo}</strong><small>Total: {cargando || error ? '—' : e.total} · Activos: {cargando || error ? '—' : e.activos} · Bajas: {cargando || error ? '—' : e.bajas}</small></span><span className="rio_blanco-inv-expansion">Mostrar listado</span></summary>
             <div className="rio_blanco-inv-bloque-cuerpo">
               <button type="button" className="rio_blanco-inv-secondary" disabled={!exportacionDisponible || e.total === 0} onClick={() => descargarCSV(e.fichas, `Listado_${e.valor}`)}>Descargar listado CSV</button>
               <div className="rio_blanco-inv-tabla-scroll" tabIndex="0" role="region" aria-label={`Listado de ${e.titulo} con desplazamiento horizontal`}>

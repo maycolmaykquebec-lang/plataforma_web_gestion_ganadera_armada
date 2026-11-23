@@ -1,6 +1,7 @@
 import { menuPermitido } from '../../auth/permisos'
 import { NavLink } from 'react-router-dom'
 import { usePerfil } from '../../contexts/PerfilContext'
+import { identidadUnidad } from './identidadUnidad'
 
 const modulos = [
   { id: 'inicio', nombre: 'Inicio', ruta: '/dashboard', icono: '⌂' },
@@ -23,6 +24,7 @@ function Sidebar() {
   const perfil = usePerfil()
   const rol = perfil?.rol?.codigo || ''
   const supervisor = rol === 'SUP_DEPTO_VII'
+  const identidad = identidadUnidad(perfil)
 
   const permitidos = menuPermitido(perfil)
 
@@ -41,7 +43,7 @@ function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <div className="sidebar-anchor">⚓</div>
+        <img src={identidad.logo} alt={`Emblema ${identidad.nombre}`} className="sidebar-unit-logo" />
         <div>
           <strong>ARMADA BOLIVIANA</strong>
           <small>{dependencia}</small>
@@ -85,7 +87,7 @@ function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        RÍO BLANCO · Registro y control de semovientes
+        {identidad.nombre} · Registro y control de semovientes
       </div>
     </aside>
   )

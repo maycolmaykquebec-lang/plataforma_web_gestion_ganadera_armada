@@ -2,6 +2,7 @@ import { puedeRegistrar as registroPermitido, consultaGeneral as consultaPermiti
 // RIO_BLANCO - PASO 18.5 | Registro reproductivo RLS desde React.
 // PostgreSQL valida rol/unidad y crea el evento historico mediante trigger.
 import { useEffect, useState } from 'react'
+import { ESPECIES_HABILITADAS } from '../utils/especies'
 import { supabase } from '../services/supabaseClient'
 import { usePerfil } from '../contexts/PerfilContext'
 import ExpedienteHistorialModal from '../components/historial/ExpedienteHistorialModal'
@@ -16,7 +17,6 @@ const ESPECIES = [
   { id: 'equino', nombre: 'Ganado equino' },
   { id: 'caprino', nombre: 'Ganado caprino' },
   { id: 'mular', nombre: 'Ganado mular' },
-  { id: 'avicola', nombre: 'Ganado avícola' },
   { id: 'porcino', nombre: 'Ganado porcino' }
 ]
 
@@ -104,7 +104,7 @@ function ControlReproductivoPage() {
           origen_modulo, datos_adicionales,
           semovientes!inner(id, codigo, especie, unidad_id)
         `, { count: 'exact' })
-        .eq('tipo_evento', 'reproductivo')
+        .eq('tipo_evento', 'reproductivo').in('semovientes.especie', ESPECIES_HABILITADAS)
 
       if (especie) consulta = consulta.eq('semovientes.especie', especie)
       if (codigoAplicado) consulta = consulta.eq('semovientes.codigo', codigoAplicado)
@@ -147,7 +147,7 @@ function ControlReproductivoPage() {
       setErrorAnimales('')
       let consulta = supabase.from('semovientes')
         .select('id, codigo, codigo_activo, especie, categoria, sexo, estado, unidad_id')
-        .eq('codigo', codigoAplicado)
+        .eq('codigo', codigoAplicado).in('especie', ESPECIES_HABILITADAS)
       if (especie) consulta = consulta.eq('especie', especie)
       if (consultaGeneral && unidadId !== 'todas') {
         consulta = consulta.eq('unidad_id', Number(unidadId))
@@ -191,18 +191,13 @@ function ControlReproductivoPage() {
 
   return (
     <main className="cr-pagina">
-      <div className="cr-aviso">
-        <strong>DEMOSTRACIÓN PÚBLICA</strong>
-        <span>Utilice únicamente datos ficticios. Los registros almacenados en Supabase no se borran al reiniciar Vite.</span>
-      </div>
-
       {avisoGuardado && (
         <p className="cr-info" role="status" style={{ background: '#e7f8ed', color: '#1c6843', border: '1px solid #abd8bd', padding: '12px 14px', borderRadius: 8 }}>
           {avisoGuardado}
         </p>
       )}
       <section className="cr-portada" aria-label="Presentación del módulo Control Reproductivo">
-        <span className="cr-eyebrow">RIO_BLANCO · MÓDULO DE ACONTECIMIENTOS</span>
+        <span className="cr-eyebrow">ARMADA BOLIVIANA · MÓDULO DE ACONTECIMIENTOS</span>
         <h1>Control reproductivo</h1>
         <p>Seguimiento de servicios, gestaciones, partos y nacimientos. Contadores automáticos de partos y montas vinculadas, con antecedentes históricos diferenciados.</p>
         <small>{consultaGeneral
@@ -356,7 +351,7 @@ function ControlReproductivoPage() {
         onCerrar={() => setAnimalParaBorrador(null)}
         onGuardado={(animalGuardado) => {
           setAnimalParaBorrador(null)
-          setAvisoGuardado(`Acontecimiento reproductivo de prueba guardado para el animal ${animalGuardado.codigo}.`)
+          setAvisoGuardado(`Acontecimiento reproductivo guardado para el animal ${animalGuardado.codigo}.`)
           setPagina(1)
           setRecarga(n => n + 1)
         }}

@@ -10,7 +10,7 @@ const CONTENT_W = W - 2 * M;
 const ESPECIES = [
   ['bovino','Ganado vacuno'], ['equino','Ganado equino'],
   ['caprino','Ganado caprino'], ['mular','Ganado mular'],
-  ['avicola','Ganado avicola'], ['porcino','Ganado porcino'],
+  ['porcino','Ganado porcino'],
 ];
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const pal = { azul:[0.06,0.20,0.33], medio:[0.10,0.38,0.62], gris:[0.33,0.42,0.51], claro:[0.91,0.95,0.98], blanco:[1,1,1], ambar:[1,.94,.77], borde:[.77,.84,.91] };
@@ -81,7 +81,7 @@ function buildPdf(pageBodies){
     kids.push(`${pageId} 0 R`);
     const lines=[...pageBodies[i]];
     line(lines,M,805,CONTENT_W);
-    text(lines,M,811,'RIO_BLANCO - SOLO DEMOSTRACION - NO OFICIAL',8,false,pal.gris);
+    text(lines,M,811,'INVENTARIO PROVISIONAL - NO OFICIAL',8,false,pal.gris);
     text(lines,W-105,811,`Pagina ${i+1} de ${total}`,8,true,pal.gris);
     const stream=lines.join('\n')+'\n';
     objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${contentId} 0 R >>`);
@@ -119,7 +119,7 @@ export function generarParteAF9Provisional({animales, unidades={}, unidadNombre=
   function nextPage(){
     current=[];pages.push(current);
     rect(current,0,0,W,92,pal.azul);
-    text(current,M,17,'ARMADA BOLIVIANA - RIO_BLANCO / DEPARTAMENTO VII',9,true,pal.blanco);
+    text(current,M,17,'ARMADA BOLIVIANA - DEPARTAMENTO VII',9,true,pal.blanco);
     text(current,M,33,'PARTE AF-9 - PROVISIONAL',19,true,pal.blanco);
     text(current,M,60,'CORTE DE INVENTARIO ACTUAL - DOCUMENTO NO OFICIAL',9,true,[.78,.89,.96]);
     rect(current,M,103,CONTENT_W,43,pal.ambar);
@@ -133,7 +133,7 @@ export function generarParteAF9Provisional({animales, unidades={}, unidadNombre=
   text(current,M,y,`Mes de referencia (informativo): ${mes}`,10,true);y+=18;
   text(current,M,y,`Consulta/corte real: ${fechaHora(fecha)}`,10);y+=17;
   text(current,M,y,`Unidad: ${limpio(unidadNombre)}`,10);y+=17;
-  text(current,M,y,`Especie: ${especie==='todas'?'Inventario general - seis especies':especieNombre(especie)}`,10);y+=29;
+  text(current,M,y,`Especie: ${especie==='todas'?'Inventario general - cinco especies':especieNombre(especie)}`,10);y+=29;
   subsection('RESUMEN DE FICHAS VISIBLES');
   const stat=[['TOTAL',total],['ACTIVAS',activos],['BAJAS',bajas],['OTROS ESTADOS',otro]];
   const bw=(CONTENT_W-21)/4;

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../services/supabaseClient'
 import { usePerfil } from '../contexts/PerfilContext'
 import { puedeRegistrar } from '../auth/permisos'
+import { ESPECIES_HABILITADAS } from '../utils/especies'
 import './MovimientosPage.css'
 
 const ESTADOS = {
@@ -158,8 +159,8 @@ export default function MovimientosPage() {
             fecha_prevista, motivo, estado, creado_en,
             fecha_autorizacion, fecha_ejecucion,
             cancelado_por, cancelado_en, motivo_cancelacion, referencia_cancelacion,
-            semoviente:semovientes(codigo)
-          `).order('creado_en', { ascending: false }).limit(100),
+            semoviente:semovientes!inner(codigo,especie)
+          `).in('semoviente.especie', ESPECIES_HABILITADAS).order('creado_en', { ascending: false }).limit(100),
         ])
         if (u.error || m.error) throw u.error || m.error
         if (vigente) { setUnidades(u.data || []); setFilas(m.data || []) }
@@ -199,7 +200,7 @@ export default function MovimientosPage() {
     await ejecutar(async () => {
       const { data, error: fallo } = await supabase.from('semovientes')
         .select('id').eq('codigo', codigo.trim().toUpperCase())
-        .eq('unidad_id', perfil.unidad.id).eq('estado', 'Activo').single()
+        .eq('unidad_id', perfil.unidad.id).eq('estado', 'Activo').in('especie', ESPECIES_HABILITADAS).single()
       if (fallo || !data) throw fallo || Error('Animal no disponible')
       const resultado = await supabase.rpc('solicitar_movimiento', {
         p_semoviente: data.id,

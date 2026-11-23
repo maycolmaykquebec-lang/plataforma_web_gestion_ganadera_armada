@@ -9,7 +9,6 @@ const ESPECIES = {
   equino: 'Ganado equino',
   caprino: 'Ganado caprino',
   mular: 'Ganado mular',
-  avicola: 'Ganado avícola',
   porcino: 'Ganado porcino'
 }
 
@@ -256,7 +255,7 @@ function NuevoControlSanitarioModal({ animal, unidad, onCerrar, onGuardado }) {
       <section ref={modalRef} className="scm-modal" role="dialog" aria-modal="true" aria-labelledby={tituloId}>
         <header className="scm-cabecera">
           <div>
-            <span className="scm-sobretitulo">RIO_BLANCO · CONTROL SANITARIO · PASO 17.5</span>
+            <span className="scm-sobretitulo">ARMADA BOLIVIANA · CONTROL SANITARIO</span>
             <h2 id={tituloId}>Nuevo acontecimiento sanitario</h2>
             <p>
               Animal <strong>{animal.codigo}</strong> · {ESPECIES[animal.especie] || animal.especie}
@@ -268,10 +267,6 @@ function NuevoControlSanitarioModal({ animal, unidad, onCerrar, onGuardado }) {
 
         <form className="scm-formulario" onSubmit={validarFormulario} noValidate aria-busy={guardando}>
           <div className="scm-cuerpo">
-            <div className="scm-aviso" role="note">
-              <strong>ENTORNO DE DESARROLLO.</strong> Utilice solamente datos ficticios.
-              Al guardar se registrará en Supabase y en el Historial Individual.
-            </div>
 
             <h3>1. Identificación del semoviente</h3>
             <div className="scm-resumen-animal">
@@ -304,11 +299,11 @@ function NuevoControlSanitarioModal({ animal, unidad, onCerrar, onGuardado }) {
               {campo('fecha', 'Fecha del control', { tipo: 'date', requerido: true, max: fechaLocalHoy() })}
               {campo('responsable', 'Responsable sanitario', {
                 requerido: true, anchoCompleto: true, maxLength: 120,
-                placeholder: 'Nombre de prueba del profesional responsable'
+                placeholder: 'Nombre del profesional responsable'
               })}
               {campo('motivo', 'Motivo o descripción del control', {
                 requerido: true, multilinea: true, anchoCompleto: true,
-                placeholder: 'Describa brevemente la intervención (datos ficticios)'
+                placeholder: 'Describa brevemente la intervención'
               })}
               {campo('diagnostico', 'Diagnóstico u observaciones clínicas', {
                 multilinea: true, anchoCompleto: true,
@@ -342,7 +337,7 @@ function NuevoControlSanitarioModal({ animal, unidad, onCerrar, onGuardado }) {
             <div className="scm-grid">
               {campo('observaciones', 'Observaciones adicionales', {
                 multilinea: true, anchoCompleto: true, maxLength: 2000,
-                placeholder: 'Añada información relevante para la ficha de prueba'
+                placeholder: 'Añada información relevante para la ficha'
               })}
             </div>
 
@@ -352,7 +347,7 @@ function NuevoControlSanitarioModal({ animal, unidad, onCerrar, onGuardado }) {
           </div>
 
           <footer className="scm-pie">
-            <span>Acceso sanitario autorizado · Datos ficticios</span>
+            <span>Registro sanitario</span>
             <div>
               <button type="button" className="scm-cancelar" onClick={onCerrar} disabled={guardando}>Cancelar</button>
               <button type="submit" className="scm-validar" disabled={guardando}>

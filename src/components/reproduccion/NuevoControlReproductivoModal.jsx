@@ -6,7 +6,7 @@ import './NuevoControlReproductivoModal.css'
 const ESPECIES = {
   bovino: 'Ganado vacuno', equino: 'Ganado equino',
   caprino: 'Ganado caprino', mular: 'Ganado mular',
-  avicola: 'Ganado avícola', porcino: 'Ganado porcino'
+  porcino: 'Ganado porcino'
 }
 
 const TIPOS_MAMIFEROS = [
@@ -16,13 +16,6 @@ const TIPOS_MAMIFEROS = [
   { id: 'parto', nombre: 'Parto', requiereHembra: true },
   { id: 'nacimiento', nombre: 'Registro de nacimiento', requiereHembra: true },
   { id: 'evaluacion', nombre: 'Evaluación reproductiva' },
-  { id: 'seguimiento', nombre: 'Seguimiento reproductivo' }
-]
-const TIPOS_AVICOLAS = [
-  { id: 'postura', nombre: 'Registro de postura', requiereHembra: true },
-  { id: 'incubacion', nombre: 'Incubación de huevos' },
-  { id: 'fertilidad', nombre: 'Evaluación de fertilidad' },
-  { id: 'eclosion', nombre: 'Eclosión' },
   { id: 'seguimiento', nombre: 'Seguimiento reproductivo' }
 ]
 const TIPOS_MULARES = [
@@ -43,7 +36,7 @@ function esBovinoClasificadoTernero(animal) {
 const VACIO = {
   tipo: '', fecha: '', responsable: '', resultado: '',
   reproductor: '', reproductorId: '', metodo: '', fechaProbable: '', cantidadCrias: '',
-  crias: '', huevos: '', huevosFertiles: '', nacidos: '',
+  crias: '',
   detalle: '', observaciones: '', proximoControl: ''
 }
 
@@ -54,9 +47,7 @@ function hoyLocal() {
 }
 
 function tiposPara(animal) {
-  let lista = animal?.especie === 'avicola' ? TIPOS_AVICOLAS
-    : animal?.especie === 'mular' ? TIPOS_MULARES
-      : TIPOS_MAMIFEROS
+  let lista = animal?.especie === 'mular' ? TIPOS_MULARES : TIPOS_MAMIFEROS
   if (animal?.sexo === 'Macho') {
     lista = lista.filter(x => !x.requiereHembra)
   }
@@ -125,7 +116,7 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
   // Se consulta SOLO los machos activos visibles dentro de la misma unidad y especie.
   // La funcion SQL vuelve a verificar la vinculacion al guardar; el selector no reemplaza RLS.
   useEffect(() => {
-    if (!abierto || animal?.sexo !== 'Hembra' || animal?.especie === 'avicola' || animal?.especie === 'mular') {
+    if (!abierto || animal?.sexo !== 'Hembra' || animal?.especie === 'mular') {
       setReproductores([])
       setErrorMachos('')
       setCargandoMachos(false)
@@ -152,11 +143,9 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
   if (!abierto) return null
 
   const tipos = tiposPara(animal)
-  const aves = animal.especie === 'avicola'
   const servicio = ['monta', 'inseminacion'].includes(datos.tipo)
   const gestacion = datos.tipo === 'gestacion'
   const nacimiento = ['parto', 'nacimiento'].includes(datos.tipo)
-  const huevos = ['postura', 'incubacion', 'fertilidad', 'eclosion'].includes(datos.tipo)
 
   function cambiar(campo, valor) {
     setDatos(actual => ({
@@ -189,27 +178,8 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
       erroresNuevos.proximoControl = 'El próximo control debe ser igual o posterior al acontecimiento.'
     }
     const enteroPositivo = texto => /^\d+$/.test(texto) && Number(texto) > 0 && Number(texto) <= 1000000
-    const enteroNoNegativo = texto => /^\d+$/.test(texto) && Number(texto) >= 0 && Number(texto) <= 1000
     if (nacimiento && !enteroPositivo(datos.cantidadCrias)) {
       erroresNuevos.cantidadCrias = 'Registre una cantidad de crías mayor a cero.'
-    }
-    if (huevos && !enteroPositivo(datos.huevos)) {
-      erroresNuevos.huevos = 'Registre una cantidad positiva de huevos.'
-    }
-    if (datos.huevosFertiles && !enteroNoNegativo(datos.huevosFertiles)) {
-      erroresNuevos.huevosFertiles = 'Indique un número entero no negativo.'
-    }
-    if (datos.nacidos && !enteroNoNegativo(datos.nacidos)) {
-      erroresNuevos.nacidos = 'Indique un número entero no negativo.'
-    }
-    if (datos.huevos && datos.huevosFertiles && Number(datos.huevosFertiles) > Number(datos.huevos)) {
-      erroresNuevos.huevosFertiles = 'No puede superar la cantidad de huevos.'
-    }
-    if (datos.huevos && datos.nacidos && Number(datos.nacidos) > Number(datos.huevos)) {
-      erroresNuevos.nacidos = 'No puede superar la cantidad de huevos.'
-    }
-    if (datos.huevosFertiles && datos.nacidos && Number(datos.nacidos) > Number(datos.huevosFertiles)) {
-      erroresNuevos.nacidos = 'Los nacimientos no pueden superar los huevos fértiles.'
     }
     if (datos.metodo.length > 150) erroresNuevos.metodo = 'Máximo 150 caracteres.'
     if (datos.reproductor.length > 80) erroresNuevos.reproductor = 'Máximo 80 caracteres.'
@@ -241,9 +211,6 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
       fecha_parto_probable: gestacion ? (datos.fechaProbable || null) : null,
       cantidad_crias: nacimiento ? Number(datos.cantidadCrias) : null,
       crias_codigos_referencia: nacimiento ? opcional(datos.crias) : null,
-      cantidad_huevos: huevos ? Number(datos.huevos) : null,
-      huevos_fertiles: huevos && datos.huevosFertiles !== '' ? Number(datos.huevosFertiles) : null,
-      nacidos_eclosion: huevos && datos.nacidos !== '' ? Number(datos.nacidos) : null,
       proximo_control: datos.proximoControl || null,
       observaciones: opcional(datos.observaciones)
     }
@@ -300,7 +267,7 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
       <section className="rcm-modal" ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="rcm-titulo" aria-busy={guardando}>
         <header className="rcm-cabecera">
           <div>
-            <span className="rcm-sobretitulo">RIO_BLANCO · CONTROL REPRODUCTIVO · PASO 18.5</span>
+            <span className="rcm-sobretitulo">ARMADA BOLIVIANA · CONTROL REPRODUCTIVO</span>
             <h2 id="rcm-titulo">Nuevo acontecimiento reproductivo</h2>
             <p>Animal <strong>{animal.codigo}</strong> · {ESPECIES[animal.especie] || animal.especie} · {unidad || 'Unidad autorizada'}</p>
           </div>
@@ -309,7 +276,6 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
 
         <form className="rcm-formulario" onSubmit={validar} noValidate>
           <div className="rcm-cuerpo">
-            <div className="rcm-aviso" role="note"><strong>ENTORNO DE DESARROLLO.</strong> Este formulario guarda datos ficticios en Supabase. No utilice información institucional real. Los datos guardados no se borran al reiniciar Vite.</div>
 
             <h3>1. Identificación del semoviente</h3>
             <div className="rcm-resumen">
@@ -340,7 +306,7 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
                 {errores.tipo && <small className="rcm-error" role="alert">{errores.tipo}</small>}
               </div>
               {campo('fecha', 'Fecha del acontecimiento', { tipo: 'date', requerido: true, max: hoyLocal() })}
-              {campo('responsable', 'Responsable que documenta', { completo: true, requerido: true, maxLength: 120, placeholder: 'Nombre de prueba del responsable' })}
+              {campo('responsable', 'Responsable que documenta', { completo: true, requerido: true, maxLength: 120, placeholder: 'Nombre del responsable' })}
               {campo('resultado', 'Resultado o estado documentado', { completo: true, requerido: true, maxLength: 200, placeholder: 'Ej.: seguimiento, confirmado, sin novedad' })}
             </div>
 
@@ -389,27 +355,17 @@ function NuevoControlReproductivoModal({ animal, unidad, onCerrar, onGuardado })
                 <p className="rcm-nota">La validación de este borrador no crea ni modifica registros de crías. El alta ganadera será un procedimiento separado y autorizado.</p>
               </>
             )}
-            {huevos && (
-              <>
-                <h3>3. Control avícola</h3>
-                <div className="rcm-grid">
-                  {campo('huevos', 'Cantidad de huevos', { tipo: 'number', requerido: true, min: '1' })}
-                  {campo('huevosFertiles', 'Huevos fértiles (si se conoce)', { tipo: 'number', min: '0' })}
-                  {campo('nacidos', 'Nacimientos por eclosión (si corresponde)', { tipo: 'number', min: '0' })}
-                </div>
-              </>
-            )}
 
-            <h3>{servicio || gestacion || nacimiento || huevos ? '4' : '3'}. Detalle y observaciones</h3>
+            <h3>{servicio || gestacion || nacimiento ? '4' : '3'}. Detalle y observaciones</h3>
             <div className="rcm-grid">
-              {campo('detalle', 'Descripción del acontecimiento', { largo: true, completo: true, requerido: true, maxLength: 1500, placeholder: 'Describe el acontecimiento usando datos ficticios' })}
+              {campo('detalle', 'Descripción del acontecimiento', { largo: true, completo: true, requerido: true, maxLength: 1500, placeholder: 'Describa el acontecimiento' })}
               {campo('proximoControl', 'Próximo control programado', { tipo: 'date', min: datos.fecha || undefined })}
               {campo('observaciones', 'Observaciones complementarias', { largo: true, completo: true, maxLength: 1500 })}
             </div>
             {errorGuardado && <p className="rcm-error rcm-error-guardado" role="alert" style={{ padding: 12, borderRadius: 8, background: '#fff2f2', border: '1px solid #e0aaaa' }}>{errorGuardado}</p>}
           </div>
           <footer className="rcm-pie">
-            <span>Registro de prueba · Guardado protegido por RLS</span>
+            <span>Registro reproductivo</span>
             <div>
               <button type="button" className="rcm-cancelar" disabled={guardando} onClick={onCerrar}>Cancelar</button>
               <button type="submit" className="rcm-validar" disabled={guardando}>{guardando ? 'Guardando...' : 'Guardar acontecimiento'}</button>

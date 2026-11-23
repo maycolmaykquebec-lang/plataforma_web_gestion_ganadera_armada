@@ -2,7 +2,6 @@
  * V4.4 · Umbrales internos para consulta por edad, NO un dictamen veterinario.
  * Bovinos: criterio institucional indicado por el proyecto.
  * Otras especies: valores preliminares para alerta; validar con responsable técnico.
- * Avícola: deliberadamente excluido.
  */
 export const CRITERIOS_DESCARTE = Object.freeze([
   { especie: 'bovino', nombre: 'Ganado vacuno', sexo: 'Macho', edad: 4, origen: 'Criterio del proyecto' },

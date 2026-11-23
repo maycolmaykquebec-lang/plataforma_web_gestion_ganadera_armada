@@ -92,14 +92,14 @@ function Login() {
                 PLATAFORMA INSTITUCIONAL DE GESTIÓN
               </span>
 
-              <h1>RÍO BLANCO</h1>
+              <h1>GESTIÓN GANADERA</h1>
 
               <h2>
                 Plataforma para el registro y control de semovientes
               </h2>
 
               <p className="rio_blanco-project-description">
-                Unidad Operativa de Servicios y Producción Ganadera "RÍO BLANCO", dependiente de la DIV. "B" "PRODUCCIÓN" del DPTO. VII "PARTICIPACIÓN EN EL DESARROLLO" de la Armada Boliviana.
+                Unidades Operativas de Servicios y Producción Ganadera, dependientes de la DIV. "B" "PRODUCCIÓN" del DPTO. VII "PARTICIPACIÓN EN EL DESARROLLO" de la Armada Boliviana.
               </p>
 
               <div className="rio_blanco-project-features">
@@ -113,10 +113,10 @@ function Login() {
             </div>
 
             <div className="rio_blanco-production-units">
-              <h3>UNIDAD OPERATIVA DE SERVICIOS Y PRODUCCIÓN GANADERA</h3>
+              <h3>UNIDADES OPERATIVAS DE SERVICIOS Y PRODUCCIÓN</h3>
 
               <div className="rio_blanco-production-names">
-                <span>RÍO BLANCO</span>
+                <span>RÍO BLANCO · TAMARINERO · MAMORÉ</span>
               </div>
             </div>
 
@@ -131,7 +131,7 @@ function Login() {
                 ⚓
               </div>
 
-              <span>BIENVENIDO A RÍO BLANCO</span>
+              <span>BIENVENIDO A LA PLATAFORMA</span>
               <h2>Acceso institucional</h2>
               <p>
                 Ingrese sus credenciales para acceder
@@ -194,7 +194,7 @@ function Login() {
           </div>
 
           <footer className="rio_blanco-access-footer">
-            RÍO BLANCO · Armada Boliviana · División "B" Producción
+            Armada Boliviana · División "B" Producción
           </footer>
         </section>
 

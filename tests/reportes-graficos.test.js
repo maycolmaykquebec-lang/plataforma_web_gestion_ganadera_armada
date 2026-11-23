@@ -39,6 +39,19 @@ test('el filtro de especie condiciona la vista y los datos de gráficos', () => 
   assert.equal(configuracionesGraficos(r).length, 4)
 })
 
+test('excluye registros y movimientos de especies no habilitadas del reporte general', () => {
+  const datos = { ...base,
+    animales: [...base.animales, {id:4, unidad_id:1, especie:'avicola', estado:'Activo', fecha_ingreso:'2026-11-01'}],
+    bajas: [...base.bajas, {id:9, semoviente_id:4, unidad_id:1, fecha:'2026-11-02'}],
+    movimientos: [...base.movimientos, {id:13, semoviente_id:4, unidad_origen_id:1, unidad_destino_id:2, estado:'pendiente', creado_en:'2026-11-02'}],
+  }
+  const reporte = calcularReporteGanadero(datos)
+  assert.equal(reporte.resumen.length, 5)
+  assert.equal(reporte.animales.length, 3)
+  assert.equal(reporte.bajas.length, 1)
+  assert.equal(reporte.movimientos.length, 2)
+})
+
 test('gráfico vacío muestra leyenda y no falla', () => {
   const vacio = calcularReporteGanadero({ animales: [], bajas: [], evaluaciones: [], movimientos: [] })
   for (const grafico of configuracionesGraficos(vacio)) {

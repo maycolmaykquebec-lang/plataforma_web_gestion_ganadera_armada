@@ -9,7 +9,6 @@ const NOMBRES = {
   equino: 'Ganado equino',
   caprino: 'Ganado caprino',
   mular: 'Ganado mular',
-  avicola: 'Ganado avícola',
   porcino: 'Ganado porcino'
 }
 
@@ -194,7 +193,7 @@ function ExpedienteHistorialModal({ animalId, onCerrar }) {
       descripcion: `Procedencia: ${animal.procedencia || 'no informada'}.`
     }] : []),
     ...(animal.created_at ? [{
-      clave: 'registro', titulo: 'Creación de la ficha digital en RIO_BLANCO',
+      clave: 'registro', titulo: 'Creación de la ficha digital',
       fecha: fecha(animal.created_at, true),
       descripcion: 'Fecha de creación en el sistema; no constituye por sí sola un evento de alta ganadera.'
     }] : [])
@@ -205,7 +204,7 @@ function ExpedienteHistorialModal({ animalId, onCerrar }) {
       <section className="eh-modal" role="dialog" aria-modal="true" aria-labelledby="eh-titulo">
         <header className="eh-header">
           <div>
-            <span>RIO_BLANCO · EXPEDIENTE INDIVIDUAL</span>
+            <span>ARMADA BOLIVIANA · EXPEDIENTE INDIVIDUAL</span>
             <h2 id="eh-titulo">{animal ? `Semoviente ${animal.codigo}` : 'Consulta del historial'}</h2>
             <p>{animal ? `${NOMBRES[animal.especie] || animal.especie} · ${animal.categoria} · ${unidad}` : 'Consulta institucional autorizada'}</p>
           </div>

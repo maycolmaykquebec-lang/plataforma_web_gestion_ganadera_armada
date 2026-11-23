@@ -75,7 +75,7 @@ function ProtectedRoute() {
   if (estado === 'cargando') {
     return (
       <div className="rio_blanco-verificando" role="status">
-        Verificando acceso institucional a Río Blanco...
+        Verificando acceso institucional...
       </div>
     )
   }

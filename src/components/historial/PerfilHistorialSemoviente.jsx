@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../services/supabaseClient'
 import ResumenReproductivo from '../reproduccion/ResumenReproductivo'
 import { edadLegible, ESPECIES_HISTORIAL, fechaHistorial, TIPOS_HISTORIAL } from '../../utils/historialGanadero'
+import { ESPECIES_HABILITADAS } from '../../utils/especies'
 import './PerfilHistorialSemoviente.css'
 
 const PESTANAS = [
@@ -55,7 +56,7 @@ export default function PerfilHistorialSemoviente({ animalId, onVolver }) {
       const { data: ficha, error: fallo } = await supabase.from('semovientes').select(`
         id,codigo,codigo_activo,especie,categoria,raza,sexo,fecha_nacimiento,fecha_ingreso,
         procedencia,marca_ancla,vacuna_brucelosis,estado,observaciones,unidad_id,created_at,updated_at
-      `).eq('id', animalId).maybeSingle()
+      `).eq('id', animalId).in('especie', ESPECIES_HABILITADAS).maybeSingle()
       if (!vivo) return
       if (fallo || !ficha) { setError('El semoviente no está disponible para su perfil o ya no existe.'); setCargando(false); return }
       setAnimal(ficha)

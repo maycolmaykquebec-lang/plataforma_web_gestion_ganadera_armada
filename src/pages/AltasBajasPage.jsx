@@ -6,6 +6,7 @@ import { puedeRegistrar } from '../auth/permisos'
 import ActaDefuncionPanel from '../components/documentos/ActaDefuncionPanel'
 import { fotoComoJpeg } from '../services/actaDefuncionWord'
 import { mensajeErrorBaja } from '../utils/erroresBaja'
+import { ESPECIES_HABILITADAS } from '../utils/especies'
 import './AltasBajasPage.css'
 
 const TAMANO = 25
@@ -61,7 +62,7 @@ function RegistrarBajaModal({ perfil, onCerrar, onGuardado }) {
       setCargando(true); setAnimales([]); setAnimalId(''); setErrorBusqueda('')
       try {
         let consulta = supabase.from('semovientes').select('id,codigo,especie,categoria,fecha_ingreso')
-          .eq('unidad_id', perfil.unidad.id).eq('estado', 'Activo').order('codigo').limit(200)
+          .eq('unidad_id', perfil.unidad.id).eq('estado', 'Activo').in('especie', ESPECIES_HABILITADAS).order('codigo').limit(200)
         if (filtro) consulta = consulta.ilike('codigo', `${filtro.replace(/[%_\\]/g, '\\$&')}%`)
         const resultado = await consulta
         if (resultado.error) throw resultado.error
@@ -178,7 +179,7 @@ export default function AltasBajasPage() {
       setCargandoAltas(true); setErrorAltas(''); setAltas([])
       try {
         const r = await supabase.from('semovientes').select('id,codigo,especie,categoria,fecha_ingreso,estado,unidad:unidades_operativas(nombre)', { count: 'exact' })
-          .order('fecha_ingreso', { ascending: false }).order('id', { ascending: false }).range((paginaAltas - 1) * TAMANO, paginaAltas * TAMANO - 1)
+          .in('especie', ESPECIES_HABILITADAS).order('fecha_ingreso', { ascending: false }).order('id', { ascending: false }).range((paginaAltas - 1) * TAMANO, paginaAltas * TAMANO - 1)
         if (r.error) throw r.error
         if (vigente) { setAltas(r.data || []); setTotalAltas(r.count || 0) }
       } catch (e) { if (vigente) { setAltas([]); setTotalAltas(0); setErrorAltas(errorConsulta(e, 'cargar los registros de ingreso')) } }
@@ -194,9 +195,9 @@ export default function AltasBajasPage() {
       try {
         const r = await supabase.from('rb_bajas').select(`
           id,semoviente_id,unidad_id,tipo,fecha,motivo,detalles,registrado_por,registrado_en,
-          semoviente:semovientes(id,codigo,codigo_activo,especie,categoria,sexo,raza,fecha_nacimiento,fecha_ingreso),
+          semoviente:semovientes!inner(id,codigo,codigo_activo,especie,categoria,sexo,raza,fecha_nacimiento,fecha_ingreso),
           unidad:unidades_operativas(nombre,sigla,codigo)
-        `, { count: 'exact' }).order('registrado_en', { ascending: false }).order('id', { ascending: false }).range((paginaBajas - 1) * TAMANO, paginaBajas * TAMANO - 1)
+        `, { count: 'exact' }).in('semoviente.especie', ESPECIES_HABILITADAS).order('registrado_en', { ascending: false }).order('id', { ascending: false }).range((paginaBajas - 1) * TAMANO, paginaBajas * TAMANO - 1)
         if (r.error) throw r.error
         if (vigente) { setBajas(r.data || []); setTotalBajas(r.count || 0) }
       } catch (e) { if (vigente) { setBajas([]); setTotalBajas(0); setErrorBajas(errorConsulta(e, 'cargar las bajas')) } }

@@ -6,6 +6,7 @@ import { puedeRegistrar as registroPermitido, consultaGeneral as consultaPermiti
 // Lectura segura a través de Supabase y las políticas RLS existentes.
 // No crea ni modifica registros; el formulario sanitario se hará en pasos posteriores.
 import { useEffect, useState } from 'react'
+import { ESPECIES_HABILITADAS } from '../utils/especies'
 import { supabase } from '../services/supabaseClient'
 import { usePerfil } from '../contexts/PerfilContext'
 import ExpedienteHistorialModal from '../components/historial/ExpedienteHistorialModal'
@@ -18,7 +19,6 @@ const ESPECIES = [
   { id: 'equino', nombre: 'Ganado equino' },
   { id: 'caprino', nombre: 'Ganado caprino' },
   { id: 'mular', nombre: 'Ganado mular' },
-  { id: 'avicola', nombre: 'Ganado avícola' },
   { id: 'porcino', nombre: 'Ganado porcino' }
 ]
 
@@ -107,7 +107,7 @@ function ControlSanitarioPage() {
           datos_adicionales, origen_modulo,
           semovientes!inner(id, codigo, especie, unidad_id)
         `, { count: 'exact' })
-        .eq('tipo_evento', 'sanitario')
+        .eq('tipo_evento', 'sanitario').in('semovientes.especie', ESPECIES_HABILITADAS)
 
       if (especie) consulta = consulta.eq('semovientes.especie', especie)
       if (codigoAplicado) consulta = consulta.eq('semovientes.codigo', codigoAplicado)
@@ -151,7 +151,7 @@ function ControlSanitarioPage() {
       let consulta = supabase
         .from('semovientes')
         .select('id, codigo, especie, categoria, sexo, estado, unidad_id')
-        .eq('codigo', codigoAplicado)
+        .eq('codigo', codigoAplicado).in('especie', ESPECIES_HABILITADAS)
       if (especie) consulta = consulta.eq('especie', especie)
       if (consultaGeneral && unidadId !== 'todas') {
         consulta = consulta.eq('unidad_id', Number(unidadId))
@@ -196,11 +196,6 @@ function ControlSanitarioPage() {
 
   return (
     <main className="cs-pagina">
-      <div className="cs-aviso">
-        <strong>DEMOSTRACIÓN PÚBLICA</strong>
-        <span>Utilice únicamente datos ficticios. Los registros almacenados en Supabase permanecen después de reiniciar Vite.</span>
-      </div>
-
       {avisoGuardado && (
         <p className="cs-aviso-guardado" role="status" style={{background: '#e5f6ea', color: '#145d32', border: '1px solid #91cda7', padding: 12, borderRadius: 8}}>{avisoGuardado}</p>
       )}
@@ -209,7 +204,7 @@ function ControlSanitarioPage() {
         aria-label="Presentación del módulo Control Sanitario"
         style={{ backgroundImage: 'linear-gradient(95deg, rgba(7,26,49,.96), rgba(12,50,81,.82) 63%, rgba(9,42,70,.46)), url("/images/portada-ganadera.jpg")' }}
       >
-        <span className="cs-sobretitulo">RIO_BLANCO · MÓDULO DE ACONTECIMIENTOS</span>
+        <span className="cs-sobretitulo">ARMADA BOLIVIANA · MÓDULO DE ACONTECIMIENTOS</span>
         <h1>Control sanitario</h1>
         <p>Consulta de vacunaciones, tratamientos, diagnósticos y controles documentados por semoviente.</p>
         <small>{consultaGeneral ? 'DEPARTAMENTO VII · CONSULTA INSTITUCIONAL' : `UNIDAD OPERATIVA ${perfil?.unidad?.nombre || 'ASIGNADA'}`}</small>
@@ -399,7 +394,7 @@ function ControlSanitarioPage() {
         onCerrar={() => setAnimalNuevoControl(null)}
         onGuardado={(animalGuardado) => {
           setAnimalNuevoControl(null)
-          setAvisoGuardado(`Control sanitario de prueba guardado para el animal ${animalGuardado.codigo}.`)
+          setAvisoGuardado(`Control sanitario guardado para el animal ${animalGuardado.codigo}.`)
           setPagina(1)
           setRecarga(n => n + 1)
         }}

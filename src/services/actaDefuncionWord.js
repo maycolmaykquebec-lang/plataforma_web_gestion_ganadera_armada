@@ -108,7 +108,7 @@ export function datosActa(baja,animal,formulario){
   VAQUERO_CARGO_CORTO:`VAQUERO U.O.S.P.G. “${un.nombre}”`,
   JEFE_CARGO:cargoJefe,
   INFORME:formulario.numeroInforme.trim() || 'NO REGISTRADO',
-  ESPECIE:({bovino:'BOVINO',equino:'EQUINO',caprino:'CAPRINO',mular:'MULAR',avicola:'AVÍCOLA',porcino:'PORCINO'})[animal.especie] || String(animal.especie).toUpperCase(),
+  ESPECIE:({bovino:'BOVINO',equino:'EQUINO',caprino:'CAPRINO',mular:'MULAR',porcino:'PORCINO'})[animal.especie] || String(animal.especie).toUpperCase(),
   CIUDAD_FECHA:`${un.ciudad}, ${dia} de ${mesTexto.toLowerCase()} del ${anio}`,
   CODIGO_ACTIVO:codigo,
   MARCADO:d.marcado || 'S/A',

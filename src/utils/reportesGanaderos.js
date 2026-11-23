@@ -1,7 +1,7 @@
 // Reportes V4.5: cálculos de solo lectura basados exclusivamente en registros devueltos por RLS.
 export const ESPECIES_REPORTE = Object.freeze([
   ['bovino', 'Ganado vacuno'], ['equino', 'Equino'], ['caprino', 'Caprino'],
-  ['mular', 'Mular'], ['avicola', 'Avícola'], ['porcino', 'Porcino'],
+  ['mular', 'Mular'], ['porcino', 'Porcino'],
 ])
 
 export const ESTADOS_MOVIMIENTOS = Object.freeze([
@@ -24,10 +24,11 @@ const fechaEvento = (fecha) => {
 }
 
 export function calcularReporteGanadero(datos, { unidad = 'todas', especie = 'todas', desde = '', hasta = '' } = {}) {
-  const animalesConPermiso = datos.animales || []
+  const codigos = new Set(ESPECIES_REPORTE.map(([codigo]) => codigo))
+  const animalesConPermiso = (datos.animales || []).filter(a => codigos.has(a.especie))
   const mapa = new Map(animalesConPermiso.map(a => [String(a.id), a]))
   const unidadCoincide = id => unidad === 'todas' || String(id) === String(unidad)
-  const especieCoincide = a => especie === 'todas' || a?.especie === especie
+  const especieCoincide = a => Boolean(a) && (especie === 'todas' || a.especie === especie)
   const fechaCoincide = fecha => {
     const f = fechaEvento(fecha)
     return Boolean(f) && (!desde || f >= desde) && (!hasta || f <= hasta)

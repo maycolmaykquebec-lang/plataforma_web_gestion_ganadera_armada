@@ -8,7 +8,7 @@ import './AF9OriginalPanel.css'
 const especies = [
   ['todas', 'Todas las especies'], ['bovino', 'Ganado vacuno'],
   ['equino', 'Ganado equino'], ['caprino', 'Ganado caprino'],
-  ['mular', 'Ganado mular'], ['avicola', 'Ganado avícola'], ['porcino', 'Ganado porcino'],
+  ['mular', 'Ganado mular'], ['porcino', 'Ganado porcino'],
 ]
 const hoy = () => {
   const partes = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/La_Paz', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date())

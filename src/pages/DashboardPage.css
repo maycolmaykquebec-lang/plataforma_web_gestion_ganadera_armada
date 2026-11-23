@@ -58,6 +58,10 @@
   letter-spacing: 1px;
 }
 
+.rio_blanco-dashboard .rio_blanco-hero h1,
+.rio_blanco-dashboard .rio_blanco-hero h2 { color: #fff; }
+.rio_blanco-dashboard .rio_blanco-hero p { color: #e9f3ff; }
+
 .rio_blanco-hero h2 {
   margin: 6px 0 12px;
   font-size: clamp(22px, 2.5vw, 30px);

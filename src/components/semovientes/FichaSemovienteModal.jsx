@@ -7,7 +7,6 @@ const NOMBRES = {
   equino: 'Ganado equino',
   caprino: 'Ganado caprino',
   mular: 'Ganado mular',
-  avicola: 'Ganado avícola',
   porcino: 'Ganado porcino'
 }
 
@@ -147,7 +146,7 @@ function FichaSemovienteModal({ animalId, onCerrar }) {
       >
         <header className="fs-header">
           <div>
-            <span>RIO_BLANCO · FICHA INDIVIDUAL</span>
+            <span>ARMADA BOLIVIANA · FICHA INDIVIDUAL</span>
             <h2 id="fs-titulo">
               {animal?.codigo || 'Consulta de semoviente'}
             </h2>

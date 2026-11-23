@@ -18,5 +18,5 @@ const comunes = ['inicio', 'semovientes', 'historial', 'sanidad', 'reproduccion'
 export function menuPermitido(perfil) {
   if (!perfilValido(perfil)) return []
   const rol = perfil.rol.codigo
-  return [...comunes, ...(rol === 'SUP_DEPTO_VII' ? ['usuarios', 'auditoria'] : rol === 'JEFE_DIV_B' ? ['auditoria'] : [])]
+  return [...comunes, ...(rol === 'SUP_DEPTO_VII' ? ['usuarios'] : rol === 'JEFE_DIV_B' ? ['auditoria'] : [])]
 }

@@ -16,6 +16,12 @@ test('supervisión general no permite registrar semovientes ni controles', () =>
     assert.equal(puedeRegistrar(perfil(rol)), false)
   }
 })
+test('el menú del supervisor incluye usuarios y no incluye auditoría', () => {
+  const menu = menuPermitido(perfil('SUP_DEPTO_VII'))
+  assert.ok(menu.includes('usuarios'))
+  assert.ok(!menu.includes('auditoria'))
+  assert.ok(menuPermitido(perfil('JEFE_DIV_B')).includes('auditoria'))
+})
 test('rechazar perfiles inactivos, roles heredados y responsables sin unidad válida', () => {
   for (const p of [null, { ...perfil('RESP_UNIDAD'), activo: false }, perfil('OPERADOR'), perfil('ADMIN_DIV_B'), perfil('RESP_UNIDAD', 'OTRA'), { ...perfil('RESP_UNIDAD'), unidad: null }]) {
     assert.equal(perfilValido(p), false)

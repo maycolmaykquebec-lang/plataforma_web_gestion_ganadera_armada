@@ -196,14 +196,14 @@ export default function EvaluacionDescartePage() {
         <label>Unidad operativa
           {general ? <select value={unidadSeleccionada} onChange={e => cambiarFiltro(setUnidadSeleccionada, e.target.value)}><option value="todas">Todas las unidades</option>{unidades.map(u => <option key={u.id} value={u.id}>{u.nombre}</option>)}</select> : <input value={perfil?.unidad?.nombre || 'Unidad asignada'} readOnly aria-label="Unidad operativa asignada" />}
         </label>
-        <label>Especie<select value={especie} onChange={e => cambiarFiltro(setEspecie, e.target.value)}><option value="todas">Todas (excepto avícola)</option>{ESPECIES_DESCARTE.map(e => <option key={e.id} value={e.id}>{e.nombre}</option>)}</select></label>
+        <label>Especie<select value={especie} onChange={e => cambiarFiltro(setEspecie, e.target.value)}><option value="todas">Todas las especies</option>{ESPECIES_DESCARTE.map(e => <option key={e.id} value={e.id}>{e.nombre}</option>)}</select></label>
         <label>Sexo<select value={sexo} onChange={e => cambiarFiltro(setSexo, e.target.value)}><option value="todos">Machos y hembras</option><option value="Macho">Machos</option><option value="Hembra">Hembras</option></select></label>
         <form onSubmit={buscar} className="ed-busqueda"><label htmlFor="ed-codigo">Código individual o del activo<input id="ed-codigo" value={codigo} maxLength={64} onChange={e => setCodigo(e.target.value)} placeholder="Ej. 009 o UOSPGM-86-WI-001" /></label><button type="submit">Buscar</button></form>
       </div>
       <div className="ed-reglas">
         <h3>Criterios por especie y sexo</h3>
         <div className="ed-reglas-grid">{ESPECIES_DESCARTE.map(e => <div key={e.id} className="ed-regla"><strong>{e.nombre}</strong><span>Macho: {criterioPara(e.id, 'Macho')?.edad} años</span><span>Hembra: {criterioPara(e.id, 'Hembra')?.edad} años</span></div>)}</div>
-        <p>Avícola excluido. En equinos y mulares el umbral de 10 años es preventivo; los criterios deben ser validados por personal veterinario. No implica descarte automático.</p>
+        <p>En equinos y mulares el umbral de 10 años es preventivo; los criterios deben ser validados por personal veterinario. No implica descarte automático.</p>
       </div>
     </section>
 
