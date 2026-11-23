@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../services/supabaseClient'
 import { descargarActaWord, rutaFotoBaja, unidadDocumento } from '../../services/actaDefuncionWord'
+import { adjuntarFotografiaBaja, errorAlAdjuntarFoto, validarArchivoBaja } from '../../services/fotografiaBaja'
+import { usePerfil } from '../../contexts/PerfilContext'
+import { puedeRegistrar } from '../../auth/permisos'
 
 function fechaHoy(){
  const partes=new Intl.DateTimeFormat('en-CA',{timeZone:'America/La_Paz',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date())
@@ -9,6 +12,7 @@ function fechaHoy(){
 }
 
 export default function ActaDefuncionPanel({ baja, animal }) {
+ const perfil=usePerfil()
  const [gradoVaquero,setGradoVaquero]=useState('')
  const [nombreVaquero,setNombreVaquero]=useState('')
  const [gradoJefe,setGradoJefe]=useState('')
@@ -26,6 +30,20 @@ export default function ActaDefuncionPanel({ baja, animal }) {
  const [generando,setGenerando]=useState(false)
  const [error,setError]=useState('')
  const [mensaje,setMensaje]=useState('')
+ const [puedeAdjuntar,setPuedeAdjuntar]=useState(false)
+ const [fotoNueva,setFotoNueva]=useState(null)
+ const [subiendoFoto,setSubiendoFoto]=useState(false)
+ const [errorSubida,setErrorSubida]=useState('')
+
+ useEffect(()=>{
+  let vigente=true
+  setPuedeAdjuntar(false)
+  if(!puedeRegistrar(perfil)||String(perfil.unidad.id)!==String(baja.unidad_id))return ()=>{vigente=false}
+  supabase.auth.getUser().then(({data,error})=>{
+   if(vigente&&!error&&data?.user?.id===baja.registrado_por)setPuedeAdjuntar(true)
+  }).catch(()=>{if(vigente)setPuedeAdjuntar(false)})
+  return ()=>{vigente=false}
+ },[perfil,baja.id,baja.unidad_id,baja.registrado_por])
 
  useEffect(()=>{
   let vigente=true
@@ -54,6 +72,18 @@ export default function ActaDefuncionPanel({ baja, animal }) {
 
  let unidad
  try { unidad=unidadDocumento(baja.unidad) } catch {unidad=null}
+ async function adjuntar(){
+  if(subiendoFoto||!puedeAdjuntar)return
+  setErrorSubida('')
+  try{
+   validarArchivoBaja(fotoNueva)
+   setSubiendoFoto(true)
+   await adjuntarFotografiaBaja({storage:supabase.storage,baja,archivo:fotoNueva})
+   setFotoNueva(null)
+   setIntentoFoto(n=>n+1)
+  }catch(e){setErrorSubida(e?.message?.startsWith('Seleccione una fotografía')?e.message:errorAlAdjuntarFoto(e))}
+  finally{setSubiendoFoto(false)}
+ }
  async function generar(){
   if(generando)return
   setError('');setMensaje('')
@@ -77,7 +107,7 @@ export default function ActaDefuncionPanel({ baja, animal }) {
  }
 
  return <div className="ab-documento-panel">
-  <p>Se conservará el diseño de la <strong>plantilla Word original</strong>, adaptando automáticamente el membrete y los cargos a {unidad?.nombre||'la unidad correspondiente'}. La fotografía se recupera de la baja registrada, no de una carga nueva.</p>
+  <p>Se conservará el diseño de la <strong>plantilla Word original</strong>, adaptando automáticamente el membrete y los cargos a {unidad?.nombre||'la unidad correspondiente'}. La fotografía corresponde a la evidencia asociada a esta baja.</p>
   <div className="ab-form-grid">
    <label htmlFor="ab-nacta">N.º de acta<input id="ab-nacta" value={numeroActa} maxLength={25} onChange={e=>setNumeroActa(e.target.value)} placeholder="Ej. 008" /></label>
    <label htmlFor="ab-finforme">N.º de informe del vaquero<input id="ab-finforme" value={numeroInforme} maxLength={30} onChange={e=>setNumeroInforme(e.target.value)} placeholder="Ej. 008/25" /></label>
@@ -102,7 +132,10 @@ export default function ActaDefuncionPanel({ baja, animal }) {
   </div>
   <div className="ab-documento-foto">
    <strong>Fotografía de la baja N.º {baja.id} · {unidad?.nombre||'Unidad desconocida'} · Animal {animal.codigo}</strong>
-   {fotoEstado==='consultando' ? <p>Consultando imagen privada…</p> : fotoEstado==='guardada' && foto && urlFoto ? <div className="ab-foto-vista"><img src={urlFoto} alt={`Fotografía de evidencia de la baja ${baja.id}`} onError={()=>{setFotoEstado('no_disponible');setFotoDetalle('La imagen descargada no puede mostrarse. Verifique su integridad en Storage.')}} /><span>Imagen confirmada: esta misma fotografía se insertará en el Word.</span></div> : <div className="ab-error"><p><strong>No se puede preparar el acta con fotografía:</strong> {fotoDetalle||'La fotografía no está disponible.'}</p><p>Compruebe que esté preparando la baja correcta y que su fotografía exista en <code>bajas-fotos/{baja.unidad_id}/{baja.id}/evidencia.jpg</code>. No registre de nuevo una baja existente.</p><button type="button" className="ab-secundario" onClick={()=>setIntentoFoto(n=>n+1)}>Volver a consultar fotografía</button></div>}
+   {fotoEstado==='consultando' ? <p>Consultando imagen privada…</p> : fotoEstado==='guardada' && foto && urlFoto ? <div className="ab-foto-vista"><img src={urlFoto} alt={`Fotografía de evidencia de la baja ${baja.id}`} onError={()=>{setFotoEstado('no_disponible');setFotoDetalle('La imagen descargada no puede mostrarse. Verifique su integridad en Storage.')}} /><span>Imagen confirmada: esta misma fotografía se insertará en el Word.</span></div> : <div className="ab-error"><p><strong>No se puede preparar el acta con fotografía:</strong> {fotoDetalle||'La fotografía no está disponible.'}</p><p>Compruebe que esté preparando la baja correcta y que su fotografía exista en <code>bajas-fotos/{baja.unidad_id}/{baja.id}/evidencia.jpg</code>. No registre de nuevo una baja existente.</p><button type="button" className="ab-secundario" disabled={subiendoFoto} onClick={()=>setIntentoFoto(n=>n+1)}>Volver a consultar fotografía</button>
+   {puedeAdjuntar && <div className="ab-detalles"><p>Si la fotografía no se guardó, puede adjuntar una vez la evidencia real de esta baja. Una fotografía existente no se sobrescribe.</p><label htmlFor="ab-foto-existente">Fotografía de evidencia (JPG, PNG o WebP; máximo 5 MB)<input id="ab-foto-existente" type="file" accept="image/jpeg,image/png,image/webp" disabled={subiendoFoto} onChange={e=>{setFotoNueva(e.target.files?.[0]||null);setErrorSubida('')}} /></label><button type="button" className="ab-secundario" disabled={!fotoNueva||subiendoFoto} onClick={adjuntar}>{subiendoFoto?'Guardando fotografía…':'Adjuntar fotografía a esta baja'}</button>{errorSubida&&<p role="alert">{errorSubida}</p>}</div>}
+   {!puedeAdjuntar && <p>Solo la cuenta responsable que registró esta baja puede adjuntar una fotografía que falte.</p>}
+   </div>}
   </div>
   {error&&<p className="ab-error" role="alert">{error}</p>}
   {mensaje&&<p className="ab-exito" role="status">{mensaje}</p>}
